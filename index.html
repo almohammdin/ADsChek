@@ -16,9 +16,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=2.0.9">
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script defer src="assets/js/app.js?v=2.0.9"></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=2.0.10">
+  <script defer src="assets/js/vendor/html2canvas.min.js?v=1.4.1"></script>
+  <script defer src="assets/js/app.js?v=2.0.10"></script>
   <title>فاحص الامتثال الإعلاني | راجع إعلانك قبل النشر</title>
 </head>
 <body>
@@ -137,7 +137,7 @@
       <div class="result-actions">
         <button class="primary-btn" id="shareImage" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5M5 13v7h14v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          مشاركة النتيجة كصورة
+          معاينة صورة النتيجة
         </button>
         <button class="secondary-btn" type="button" data-action="restart">فحص إعلان جديد</button>
       </div>
@@ -152,7 +152,7 @@
         </a>
         <div class="footer-credit">
           <strong>تطوير وإشراف نايف المحمدي</strong>
-          <span>الإصدار 2.0.9</span>
+          <span>الإصدار 2.0.10</span>
         </div>
         <nav class="footer-social" aria-label="حساباتي">
           <a class="social-handle" href="https://linktr.ee/almohammdin" target="_blank" rel="noopener">Almohammdin</a>
@@ -175,6 +175,27 @@
   </footer>
 
   <div id="imageExportStage" aria-hidden="true"></div>
+
+  <section class="image-preview" id="imagePreview" role="dialog" aria-modal="true" aria-labelledby="imagePreviewTitle" hidden>
+    <div class="image-preview-backdrop" data-action="close-image-preview"></div>
+    <div class="image-preview-panel">
+      <div class="image-preview-head">
+        <div>
+          <span>جاهزة للحفظ أو المشاركة</span>
+          <h2 id="imagePreviewTitle">صورة نتيجة الفحص</h2>
+        </div>
+        <button class="image-preview-close" type="button" data-action="close-image-preview" aria-label="إغلاق معاينة الصورة">×</button>
+      </div>
+      <div class="image-preview-body">
+        <img id="resultImagePreview" alt="معاينة صورة نتيجة فاحص الامتثال الإعلاني">
+      </div>
+      <div class="image-preview-actions">
+        <button class="primary-btn" id="sharePreparedImage" type="button">مشاركة الصورة</button>
+        <button class="secondary-btn" id="downloadPreparedImage" type="button">تنزيل الصورة</button>
+      </div>
+      <p class="image-preview-note">إذا لم يبدأ التنزيل في iPhone، اضغط مطولًا على الصورة ثم اختر «حفظ في الصور».</p>
+    </div>
+  </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
