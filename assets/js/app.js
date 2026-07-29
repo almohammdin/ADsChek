@@ -757,7 +757,7 @@
 
         <div class="share-top">
           <div class="share-brand">
-            <img class="share-logo" src="assets/images/adschek-logo.png" alt="فاحص الامتثال الإعلاني">
+            <img class="share-logo" src="assets/images/adschek-logo-preview.jpg" alt="فاحص الامتثال الإعلاني" loading="eager" decoding="sync">
           </div>
           <div class="share-date">${date}</div>
         </div>
