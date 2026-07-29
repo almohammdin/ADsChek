@@ -1,28 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
-  <defs>
-    <pattern id="p" width="180" height="110" patternUnits="userSpaceOnUse">
-      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <g opacity="0.075" stroke="#0B1A2B" stroke-width="3.4">
-          <path d="M90 84V42M90 84L62 60M90 84l28-24M90 84V98"/>
-          <path d="M62 60H38M118 60h24M90 42l-18-16M90 42l18-16"/>
-        </g>
-        <g opacity="0.13" stroke="#C9A84C" stroke-width="2.6">
-          <path d="M90 34V18M58 68H42M122 68h16"/>
-        </g>
-      </g>
-      <g opacity="0.075" fill="#0B1A2B">
-        <circle cx="90" cy="18" r="6"/>
-        <circle cx="38" cy="60" r="5"/>
-        <circle cx="142" cy="60" r="5"/>
-        <circle cx="72" cy="26" r="4.5"/>
-        <circle cx="108" cy="26" r="4.5"/>
-      </g>
-      <g opacity="0.13" fill="#C9A84C">
-        <rect x="85" y="48" width="10" height="10" transform="rotate(45 90 53)"/>
-        <rect x="49" y="63" width="10" height="10" transform="rotate(45 54 68)"/>
-        <rect x="121" y="63" width="10" height="10" transform="rotate(45 126 68)"/>
-      </g>
-    </pattern>
-  </defs>
-  <rect width="1080" height="1350" fill="url(#p)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g opacity=".042" stroke="#07345b" stroke-width="13">
+      <path d="M1000 808c-54 33-118 49-187 51v150c0 121 71 204 187 257 43-20 80-44 110-73"/>
+      <path d="M905 1018h49l95-48v126l-95-48h-49z"/>
+      <path d="M954 1048l22 62h48"/>
+      <path d="M875 979l-37-24M868 1018h-45M875 1057l-37 24"/>
+    </g>
+    <g opacity=".06" stroke="#d8a61c" stroke-width="10">
+      <circle cx="114" cy="272" r="68"/>
+      <path d="m81 273 24 24 46-52"/>
+    </g>
+    <g opacity=".045" stroke="#0aa0a5" stroke-width="9">
+      <path d="M37 183h122M37 215h75"/>
+      <path d="M846 124h178M903 156h121"/>
+    </g>
+    <path opacity=".045" stroke="#07345b" stroke-width="3" stroke-dasharray="5 16" d="M66 648h948"/>
+  </g>
 </svg>
