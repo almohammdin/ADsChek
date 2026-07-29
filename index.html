@@ -1,919 +1,185 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>لوحة تحكم الامتثال الإعلاني | Ad Compliance Dashboard</title>
-
-  <!-- IBM Plex Sans Arabic Font -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1a2b">
+  <meta name="description" content="أداة استرشادية تساعد المنشآت على مراجعة الإعلان قبل نشره وفق نوع الحملة ومحتواها والقنوات المستخدمة.">
+  <meta property="og:title" content="فاحص الإعلان | راجع إعلانك قبل النشر">
+  <meta property="og:description" content="فحص تفاعلي مبسط يحدد نقاط الإعلان التي تحتاج تعديلا قبل النشر.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://almohammdin.github.io/ADsChek/">
+  <meta property="og:image" content="https://almohammdin.github.io/ADsChek/assets/images/adschek-logo-preview.jpg">
+  <link rel="canonical" href="https://almohammdin.github.io/ADsChek/">
+  <link rel="icon" type="image/png" href="assets/images/adschek-icon-256.png">
+  <link rel="apple-touch-icon" href="assets/images/adschek-icon-256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <!-- TailwindCSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    :root {
-      /* Navy Blue Color Palette */
-      --grad-1: #0a1428;
-      --grad-2: #081220;
-      --grad-3: #050a12;
-      --glass: rgba(255,255,255,.06);
-      --glass-strong: rgba(255,255,255,.09);
-      --stroke-bg: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --focus: rgba(59,130,246,.55);
-    }
-
-    html, body { 
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 18px;
-      background: linear-gradient(135deg, var(--grad-1) 0%, var(--grad-2) 35%, var(--grad-3) 100%);
-      background-attachment: fixed;
-      color: var(--text);
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Blurred background shapes */
-    .blob {
-      position: absolute;
-      filter: blur(60px);
-      opacity: .45;
-      transform: translateZ(0);
-      border-radius: 999px;
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-    .blob.b1 { width: 520px; height: 520px; left: -160px; top: -120px; background: rgba(59,130,246,.45); }
-    .blob.b2 { width: 520px; height: 520px; right: -180px; top: 120px; background: rgba(34,197,94,.35); }
-    .blob.b3 { width: 640px; height: 640px; left: 120px; bottom: -260px; background: rgba(245,158,11,.30); }
-
-    /* Grid overlay */
-    .grid-overlay {
-      background-image:
-        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(700px 380px at 50% 18%, rgba(0,0,0,.9), transparent 75%);
-      pointer-events: none;
-    }
-
-    /* Glassmorphism */
-    .glass {
-      background: var(--glass);
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-    .glass-strong {
-      background: var(--glass-strong);
-      border: 1px solid rgba(255,255,255,.16);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-
-    /* Buttons */
-    .btn {
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.10);
-      transition: transform .12s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-    .btn:hover {
-      transform: translateY(-1px);
-      background: rgba(59,130,246,.16);
-      border-color: rgba(59,130,246,.35);
-      box-shadow: 0 18px 45px rgba(59,130,246,.12);
-    }
-
-    /* Icon buttons */
-    .icon-btn {
-      width: 44px;
-      height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.08);
-      transition: transform .12s ease, background .2s ease;
-    }
-    .icon-btn:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.12);
-    }
-
-    /* Custom checkbox */
-    .cb {
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.06);
-      display: inline-grid;
-      place-items: center;
-      cursor: pointer;
-      transition: all .18s ease;
-      flex: 0 0 auto;
-    }
-    .cb:checked {
-      border-color: rgba(34,197,94,.75);
-      background: rgba(34,197,94,.18);
-    }
-    .cb::after {
-      content: "";
-      width: 11px;
-      height: 7px;
-      border-left: 2px solid rgba(255,255,255,.95);
-      border-bottom: 2px solid rgba(255,255,255,.95);
-      transform: rotate(-45deg) scale(0);
-      transition: transform .15s ease;
-    }
-    .cb:checked::after { transform: rotate(-45deg) scale(1); }
-
-    /* Accordion */
-    .acc-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 320ms ease;
-    }
-    .acc.open .acc-body { max-height: 800px; }
-    .chev { transition: transform 200ms ease; }
-    .acc.open .chev { transform: rotate(180deg); }
-
-    /* Ring gauge */
-    .ring-wrap {
-      position: relative;
-      width: 240px;
-      height: 240px;
-      filter: drop-shadow(0 18px 40px rgba(0,0,0,.35));
-    }
-    @media (min-width: 640px) {
-      .ring-wrap { width: 260px; height: 260px; }
-    }
-    .ring-fg {
-      stroke-linecap: round;
-      transition: stroke-dashoffset 650ms cubic-bezier(.2,.9,.2,1), stroke 650ms ease;
-    }
-    .ring-center {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      gap: 6px;
-    }
-
-    /* KPI states */
-    .kpi.ok {
-      border-color: rgba(34,197,94,.55) !important;
-      background: rgba(34,197,94,.14) !important;
-    }
-    .kpi.bad {
-      border-color: rgba(239,68,68,.45) !important;
-      background: rgba(239,68,68,.12) !important;
-    }
-
-    /* Welcome overlay */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
-      background: rgba(0,0,0,.58);
-      backdrop-filter: blur(10px);
-      z-index: 50;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .overlay.hidden { display: none; }
-    
-    /* Welcome card responsive */
-    .overlay > div {
-      width: 100%;
-      max-width: 95vw;
-      max-height: 90vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    @media (max-width: 640px) {
-      .overlay {
-        padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right)) max(0.5rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
-      }
-      .overlay > div {
-        max-width: 100vw;
-        max-height: 95vh;
-        border-radius: 16px;
-      }
-    }
-
-    /* Tooltip */
-    .tip-wrap { 
-      position: relative; 
-      display: inline-flex; 
-      align-items: center;
-      overflow: visible;
-    }
-    .tip-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-inline-start: 10px;
-      cursor: help;
-      flex: 0 0 auto;
-    }
-    .tip {
-      position: absolute;
-      left: 0;
-      right: auto;
-      transform: translateY(-6px);
-      top: calc(100% + 8px);
-      width: max(180px, min(240px, calc(100vw - 40px)));
-      background: rgba(10,15,28,.98);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-size: 12px;
-      color: rgba(255,255,255,.9);
-      line-height: 1.4;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .16s ease, transform .16s ease;
-      z-index: 60;
-      white-space: normal;
-      word-wrap: break-word;
-      overflow: hidden;
-      max-height: 120px;
-      overflow-y: auto;
-      box-sizing: border-box;
-    }
-    .tip-wrap:hover .tip,
-    .tip-wrap:focus-within .tip {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-
-    /* Utilities */
-    .t-en { font-size: .86em; color: rgba(255,255,255,.62); }
-    h1 { font-weight: 700; }
-    .h-sec { font-weight: 600; }
-    .t-regular { font-weight: 400; }
-    .t-light { font-weight: 300; }
-
-    /* Campaign type options - Mobile optimized */
-    .campaign-option {
-      background: rgba(10, 20, 40, 0.6) !important;
-      border: 1px solid rgba(255,255,255,.16) !important;
-      border-radius: 12px;
-      padding: 14px 12px !important;
-      margin-bottom: 10px;
-      transition: all 0.2s ease;
-    }
-    .campaign-option:hover {
-      background: rgba(20, 35, 60, 0.8) !important;
-      border-color: rgba(255,255,255,.25) !important;
-    }
-    .campaign-option input[type="radio"] {
-      width: 20px !important;
-      height: 20px !important;
-      margin-top: 2px !important;
-    }
-    .campaign-option .font-semibold {
-      color: #ffffff !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-      line-height: 1.3;
-    }
-    .campaign-option .text-white\/70 {
-      color: rgba(255,255,255,.75) !important;
-      font-size: 14px !important;
-      line-height: 1.4;
-    }
-
-    /* Mobile responsiveness improvements */
-    @media (max-width: 640px) {
-      body {
-        font-size: 16px;
-      }
-      .campaign-option {
-        padding: 16px 14px !important;
-        margin-bottom: 12px;
-      }
-      .campaign-option .font-semibold {
-        font-size: 15px !important;
-      }
-      .campaign-option .text-white\/70 {
-        font-size: 13px !important;
-      }
-      .tip-wrap {
-        display: none;
-      }
-    }
-
-    /* Print styles */
-    @media print {
-      body { background: #fff !important; color: #111 !important; }
-      .blob, .grid-overlay, #welcomeOverlay { display: none !important; }
-      .glass, .glass-strong { background: #fff !important; border: 1px solid #e5e7eb !important; }
-      .btn, .icon-btn { display: none !important; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=2.0.0">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script defer src="assets/js/app.js?v=2.0.0"></script>
+  <title>فاحص الإعلان | راجع إعلانك قبل النشر</title>
 </head>
-
 <body>
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
-  <div class="grid-overlay absolute inset-0"></div>
+  <div class="top-accent" aria-hidden="true"></div>
 
-  <!-- Welcome Screen -->
-  <div id="welcomeOverlay" class="overlay">
-    <div class="glass-strong rounded-2xl w-full max-w-xl p-5 sm:p-8" style="min-height: auto; box-sizing: border-box;">
-      <div class="flex items-center justify-between gap-4">
-        <div class="text-sm sm:text-base font-semibold text-white/80">لوحة تحكم الامتثال الإعلاني</div>
-        <span class="text-xs sm:text-sm px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white/70">
-          Ad Compliance Dashboard
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="./" aria-label="العودة إلى بداية الأداة">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="assets/images/adschek-icon-256.png" alt="">
         </span>
-      </div>
+        <span>
+          <strong>فاحص الإعلان</strong>
+          <small>ADsChek</small>
+        </span>
+      </a>
 
-      <h2 class="mt-4 text-2xl sm:text-3xl font-bold">
-        أداة استرشادية تفاعلية لتقدير المخاطر النظامية
-      </h2>
-
-      <p class="mt-3 text-white/80 t-regular leading-relaxed">
-        هذه الأداة مصممة لتغطية الأنواع الأربعة الرئيسية للإعلانات التي تعتمد عليها أغلب المنشآت الصغيرة والمتوسطة في حملاتها، وهي: (الإعلانات العامة، التواصل المباشر، إعادة الاستهداف، والإعلانات المادية). تساعد الأداة على مراجعة حملتك وتوضيح مدى مواءمتها للأنظمة، لتعزيز مستوى الامتثال وتقليل المخاطر النظامية المحتملة.
-      </p>
-
-      <!-- Campaign Type Filter -->
-      <div class="mt-5 glass rounded-2xl p-4 border border-white/10">
-        <div class="h-sec text-white">
-          ما هو النوع الرئيسي لحملتك الإعلانية؟
-        </div>
-        <div class="mt-3 space-y-3">
-
-          <!-- general_audience -->
-          <label class="flex items-start gap-3 cursor-pointer select-none p-3 rounded-lg hover:bg-white/5 campaign-option">
-            <input type="radio" name="campaignType" value="general_audience" class="mt-1 w-5 h-5 accent-blue-500" />
-            <div class="flex-1">
-              <div class="font-semibold">إعلان للجمهور العام</div>
-              <div class="text-white/70 text-sm t-regular">إعلانات لجمهور جديد لا تعرفه مسبقاً.</div>
-              <div class="text-white/50 text-xs t-regular mt-1 leading-relaxed">يشمل الإعلانات التي تظهر لجمهور جديد لا تملك بياناتهم مسبقاً، مثل إعلانات المنصات (تويتر، سناب شات، تيك توك) أو حملات المؤثرين.</div>
-            </div>
-          </label>
-
-          <!-- private_data -->
-          <label class="flex items-start gap-3 cursor-pointer select-none p-3 rounded-lg hover:bg-white/5 campaign-option">
-            <input type="radio" name="campaignType" value="private_data" class="mt-1 w-5 h-5 accent-blue-500" />
-            <div class="flex-1">
-              <div class="font-semibold">إعلان لبيانات خاصة</div>
-              <div class="text-white/70 text-sm t-regular">حملات لقائمة عملاء تملك بياناتهم.</div>
-              <div class="text-white/50 text-xs t-regular mt-1 leading-relaxed">يشمل الحملات الموجهة لقائمة عملائك الحاليين الذين تملك بيانات التواصل معهم مسبقاً، مثل حملات البريد الإلكتروني أو رسائل SMS.</div>
-            </div>
-          </label>
-
-          <!-- retargeting -->
-          <label class="flex items-start gap-3 cursor-pointer select-none p-3 rounded-lg hover:bg-white/5 campaign-option">
-            <input type="radio" name="campaignType" value="retargeting" class="mt-1 w-5 h-5 accent-blue-500" />
-            <div class="flex-1">
-              <div class="font-semibold">إعلان إعادة استهداف</div>
-              <div class="text-white/70 text-sm t-regular">تتبع زوار سابقين وإعادة عرض الإعلان لهم.</div>
-              <div class="text-white/50 text-xs t-regular mt-1 leading-relaxed">يشمل الإعلانات التي تتبع زوار موقعك الإلكتروني السابقين وإعادة عرض الإعلان لهم باستخدام تقنيات التتبع الرقمي (مثل Pixel).</div>
-            </div>
-          </label>
-
-          <!-- offline_ads -->
-          <label class="flex items-start gap-3 cursor-pointer select-none p-3 rounded-lg hover:bg-white/5 campaign-option">
-            <input type="radio" name="campaignType" value="offline_ads" class="mt-1 w-5 h-5 accent-blue-500" />
-            <div class="flex-1">
-              <div class="font-semibold">إعلان مادي/غير رقمي</div>
-              <div class="text-white/70 text-sm t-regular">لوحات المحل، بروشورات، إعلانات الشارع.</div>
-              <div class="text-white/50 text-xs t-regular mt-1 leading-relaxed">يشمل الوسائل الإعلانية الملموسة والتقليدية مثل لوحات المحلات، البروشورات الموزعة، أو إعلانات الشوارع التي لا تعتمد على جمع بيانات رقمية.</div>
-            </div>
-          </label>
-
-        </div>
-      </div>
-
-      <button id="startBtn" class="btn mt-5 w-full rounded-xl py-3 font-semibold opacity-60 cursor-not-allowed" disabled>
-        ابدأ التقييم
-      </button>
+      <nav class="social-nav" aria-label="حساباتي">
+        <span class="social-label">حساباتي</span>
+        <a href="https://x.com/almohammdin" target="_blank" rel="noopener" aria-label="حساب X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 2H22l-8.3 9.5L23.5 22h-7.7l-6-7.9L2.9 22H-.9l8.9-10.2L-1.4 2h7.9l5.4 7.2L18.2 2Zm-1.3 18h2.1L5.4 3.9H3.2L16.9 20Z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/almohammdin/" target="_blank" rel="noopener" aria-label="حساب LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 7.9H1.7V22h3.6V7.9ZM3.5 2A2.1 2.1 0 1 0 3.5 6.2 2.1 2.1 0 0 0 3.5 2ZM22 13.9c0-4.2-2.2-6.2-5.2-6.2-2.4 0-3.5 1.3-4.1 2.2v-2H9.1V22h3.6v-7c0-1.8.3-3.6 2.6-3.6 2.2 0 2.3 2.1 2.3 3.7V22H22v-8.1Z"/></svg>
+        </a>
+        <a href="https://www.snapchat.com/add/almohammdin" target="_blank" rel="noopener" aria-label="حساب Snapchat">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.1c-3.1 0-5.2 2.5-5.2 5.7 0 .8.1 1.7.2 2.4-.4.2-1 .3-1.5.1-.8-.3-1.3 1-.5 1.5.4.3 1.1.5 1.5.7-.5 1.2-1.5 2.3-3.1 3-.6.3-.5 1.2.1 1.4 1 .4 2 .5 2.8.7.3.1.5.7.8 1.2.2.3.6.4 1 .3.8-.2 1.6-.5 2.9-.5s2.1.3 2.9.5c.4.1.8 0 1-.3.3-.5.5-1.1.8-1.2.8-.2 1.8-.3 2.8-.7.6-.2.7-1.1.1-1.4-1.6-.7-2.6-1.8-3.1-3 .4-.2 1.1-.4 1.5-.7.8-.5.3-1.8-.5-1.5-.5.2-1.1.1-1.5-.1.1-.7.2-1.6.2-2.4 0-3.2-2.1-5.7-5.2-5.7Z"/></svg>
+        </a>
+        <a href="https://linktr.ee/almohammdin" target="_blank" rel="noopener" aria-label="صفحة الروابط">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1.4 4.1 4.2-2.4 2.3-1.7-1.8-1.7 1.8-2.4-2.3L12 1.4Zm-7.2 7 2.4-2.3 3.1 3.2H6v3.3h4.3l-5.5 5.6-2.4-2.3 3.1-3.1H1.2V9.3h4.3L4.8 8.4Zm14.4 0 .7.9h-4.3v3.3h4.3l-3.1 3.1 2.4 2.3 5.5-5.6h-4.3V9.3h-4.3l3.1-3.2 2.4 2.3ZM10.3 14.7h3.4V23h-3.4v-8.3Z"/></svg>
+        </a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <!-- Main Dashboard -->
-  <main id="dashboard" class="relative max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 hidden">
-    <!-- Header -->
-    <section class="glass rounded-2xl p-5 sm:p-8">
-      <div class="flex items-start justify-between gap-4 flex-wrap">
-        <div class="min-w-[220px]">
-          <h1 class="text-2xl sm:text-4xl leading-snug">
-            لوحة تحكم الامتثال الإعلاني
-          </h1>
-          <p class="text-white/75 text-base sm:text-lg t-regular mt-2">
-            أداة استرشادية تفاعلية لتقدير المخاطر النظامية بشكل مبدئي.
-          </p>
-        </div>
-
-        <!-- Buttons: Print + Reset + Change Campaign -->
-        <div class="flex items-center gap-3 flex-wrap">
-          <button id="printBtn" type="button" class="btn rounded-lg px-4 py-2 text-sm font-semibold" aria-label="طباعة">
-            طباعة
-          </button>
-          <button id="resetBtn" type="button" class="btn rounded-lg px-4 py-2 text-sm font-semibold" aria-label="البدء من جديد">
-            ابدأ من جديد
-          </button>
-          <button id="changeCampaignBtn" type="button" class="btn rounded-lg px-4 py-2 text-sm font-semibold" aria-label="تغيير نوع الحملة">
-            تغيير نوع الحملة
-          </button>
+  <main>
+    <section class="hero shell" id="homeView">
+      <div class="hero-copy">
+        <div class="eyebrow">أداة استرشادية للمنشآت</div>
+        <h1>راجع إعلانك قبل أن تنشره</h1>
+        <p>حدد قناة الإعلان وما يتضمنه، ثم أجب عن الأسئلة التي تنطبق على حملتك. ستحصل على نتيجة واضحة ونقاط محددة تحتاج إلى تعديل.</p>
+        <div class="hero-actions">
+          <button class="primary-btn" type="button" data-action="start">ابدأ فحص الإعلان</button>
+          <span>يستغرق عادة من 3 إلى 6 دقائق</span>
         </div>
       </div>
 
-      <div class="mt-3 text-white/65 text-sm t-regular">
-        نوع الحملة المختار: <span id="campaignBadge" class="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white/80 inline-flex font-semibold">—</span>
+      <div class="hero-panel" aria-label="ما الذي ستعرفه من الفحص">
+        <div class="panel-kicker">قبل الضغط على زر النشر</div>
+        <div class="hero-check"><span>1</span><p><strong>هل ينطبق على الإعلان ترخيص؟</strong><small>مثل التخفيض أو المسابقة أو إعلان المؤثر.</small></p></div>
+        <div class="hero-check"><span>2</span><p><strong>هل طريقة الوصول للجمهور سليمة؟</strong><small>خصوصا بيانات العملاء والرسائل والمكالمات.</small></p></div>
+        <div class="hero-check"><span>3</span><p><strong>هل المحتوى والسعر والادعاءات واضحة؟</strong><small>بما في ذلك متطلبات المطاعم والمقاهي.</small></p></div>
       </div>
     </section>
 
-    <!-- Dashboard Grid -->
-    <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- Gauge -->
-      <div class="lg:col-span-5 glass-strong rounded-2xl p-5 sm:p-8">
+    <section class="tool-view shell" id="profileView" hidden>
+      <div class="step-head">
         <div>
-          <div class="text-white text-xl sm:text-2xl h-sec">مؤشر الامتثال الاسترشادي</div>
-          <div class="text-white/80 text-base sm:text-lg mt-1 t-regular">Indicative Compliance Index</div>
+          <span class="step-count">الخطوة 1 من 3</span>
+          <h2>صف لنا الإعلان</h2>
+          <p>يمكنك اختيار أكثر من قناة وأكثر من وصف.</p>
         </div>
-
-        <div class="mt-6 flex items-center justify-center">
-          <div class="ring-wrap">
-            <svg width="260" height="260" viewBox="0 0 260 260">
-              <circle cx="130" cy="130" r="108" stroke-width="18" fill="none" stroke="var(--stroke-bg)"></circle>
-              <circle id="ringFg" cx="130" cy="130" r="108" stroke-width="18" fill="none" transform="rotate(-90 130 130)" stroke="#22c55e"></circle>
-            </svg>
-            <div class="ring-center">
-              <div class="text-white/70 text-sm sm:text-base t-regular">درجة الامتثال وفق المعايير المدخلة</div>
-              <div id="scoreNumber" class="text-5xl sm:text-6xl font-bold">0%</div>
-              <div id="scoreLabel" class="text-sm sm:text-base h-sec text-white/75">—</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 grid grid-cols-2 gap-3">
-          <div class="glass rounded-xl p-4 border border-white/10">
-            <div class="text-white/70 text-sm t-regular">الوزن المُكتسب</div>
-            <div class="mt-1 text-2xl font-bold" id="earnedWeight">0</div>
-          </div>
-          <div class="glass rounded-xl p-4 border border-white/10">
-            <div class="text-white/70 text-sm t-regular">الوزن الكلي</div>
-            <div class="mt-1 text-2xl font-bold" id="totalWeight">0</div>
-          </div>
-        </div>
+        <button class="text-btn" type="button" data-action="home">العودة للبداية</button>
       </div>
 
-      <!-- Checklist -->
-      <div class="lg:col-span-7 glass-strong rounded-2xl p-5 sm:p-8">
+      <div class="profile-grid">
+        <section class="form-card">
+          <div class="field">
+            <label for="campaignName">اسم الإعلان أو الحملة <small>اختياري</small></label>
+            <input id="campaignName" type="text" maxlength="70" placeholder="مثال: عرض افتتاح الفرع الجديد">
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-label">
+            <span>أين سيظهر الإعلان؟</span>
+            <small>اختر كل القنوات المستخدمة</small>
+          </div>
+          <div class="choice-grid" id="channelChoices"></div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-label">
+            <span>ماذا يتضمن الإعلان؟</span>
+            <small>اختر كل ما ينطبق</small>
+          </div>
+          <div class="choice-grid" id="featureChoices"></div>
+        </section>
+      </div>
+
+      <div class="sticky-action">
+        <div id="profileHint">اختر قناة واحدة على الأقل.</div>
+        <button class="primary-btn" id="buildAssessment" type="button" disabled>ابدأ الأسئلة</button>
+      </div>
+    </section>
+
+    <section class="tool-view shell" id="assessmentView" hidden>
+      <div class="step-head">
         <div>
-          <div class="text-white text-xl sm:text-2xl h-sec">بنود الفحص</div>
-          <div class="text-white/80 text-base sm:text-lg mt-1 t-regular">قائمة المراجعة الاسترشادية</div>
+          <span class="step-count">الخطوة 2 من 3</span>
+          <h2>أسئلة تخص إعلانك</h2>
+          <p id="assessmentIntro"></p>
         </div>
+        <button class="text-btn" type="button" data-action="edit-profile">تعديل وصف الإعلان</button>
+      </div>
 
-        <div class="mt-5 space-y-3" id="checklistContainer">
-          <!-- Items will be inserted here by JavaScript -->
-        </div>
+      <div class="progress-wrap" aria-label="نسبة إكمال الأسئلة">
+        <div class="progress-copy"><span id="progressText">0 من 0</span><strong id="progressPercent">0%</strong></div>
+        <div class="progress-track"><span id="progressBar"></span></div>
+      </div>
+
+      <div id="questionsRoot"></div>
+
+      <div class="sticky-action">
+        <div id="answerHint">أجب عن جميع الأسئلة. استخدم «غير متأكد» عندما لا تملك الإجابة.</div>
+        <button class="primary-btn" id="showResult" type="button" disabled>اعرض النتيجة</button>
       </div>
     </section>
 
-    <!-- Report Section -->
-    <section class="mt-6 glass-strong rounded-2xl p-5 sm:p-8">
-      <div class="text-white text-xl sm:text-2xl h-sec">ملخص التقييم الإرشادي</div>
-      <div id="reportText" class="mt-4 text-white/80 t-regular leading-relaxed">
-        أكمل الإجابة على جميع الأسئلة لرؤية التقرير.
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <section class="mt-8">
-      <!-- Warning/Tip Section -->
-      <div class="glass rounded-2xl p-5 sm:p-8 border-l-4 border-orange-400 mb-6">
-        <div class="flex items-start gap-4">
-          <div class="text-2xl">⚠️</div>
-          <div>
-            <div class="font-bold text-orange-300 text-lg">تنبيه مهم</div>
-            <p class="mt-2 text-white/85 t-regular leading-relaxed">
-              هذه الأداة توفر تقييماً إرشادياً أولياً فقط، وليست توصية قانونية أو ضمان. النتيجة تعتمد بالكامل على دقة إجاباتك، وأي نقص أو خطأ في الإدخال قد يؤثر على دقة التقييم. لتحقيق مستوى امتثال أفضل وتقليل المخاطر النظامية، <span class="font-semibold text-white">يُنصح دائماً بمراجعة خبير مختص</span> قبل إطلاق أي حملة.
-            </p>
-          </div>
+    <section class="tool-view shell" id="resultView" hidden>
+      <div class="step-head result-heading">
+        <div>
+          <span class="step-count">الخطوة 3 من 3</span>
+          <h2>نتيجة فحص الإعلان</h2>
+          <p>النتيجة مبنية على إجاباتك ونوع الحملة الذي حددته.</p>
         </div>
+        <button class="text-btn" type="button" data-action="edit-answers">مراجعة الإجابات</button>
       </div>
 
-      <!-- Contact & Footer -->
-      <div class="text-center text-white/65 t-light text-sm">
-        <div class="flex items-center justify-center gap-4 mb-4">
-          <span class="font-semibold text-white/80">للتواصل:</span>
-          <a href="https://x.com/almohammdin" target="_blank" rel="noopener" class="hover:text-white transition" title="تويتر">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.514l-5.106-6.694L2.896 21.75H.588l7.753-8.835L.461 2.25h6.679l4.632 6.132 5.484-6.132zM17.15 19.128h1.83L6.122 4.093H4.192l13.958 15.035z"/>
-            </svg>
-          </a>
-          <a href="https://www.linkedin.com/in/naif-almohammdi/" target="_blank" rel="noopener" class="hover:text-white transition" title="لينكد إن">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
-            </svg>
-          </a>
-          <a href="https://snapchat.com/t/xBFQJjSW" target="_blank" rel="noopener" class="hover:text-white transition text-sm" title="سناب شات">سناب شات</a>
-        </div>
-        <p class="text-white/70 font-semibold">إعداد: نايف المحمدي</p>
+      <div id="resultRoot"></div>
+
+      <div class="result-actions">
+        <button class="primary-btn" id="shareImage" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5M5 13v7h14v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          مشاركة النتيجة كصورة
+        </button>
+        <button class="secondary-btn" type="button" data-action="restart">فحص إعلان جديد</button>
       </div>
     </section>
   </main>
 
-  <script>
-    // Checklist items with weights
-    const items = [
-      {
-        id: 'data',
-        weight: 3,
-        visibleFor: ['private_data', 'retargeting'],
-        title: 'البيانات وخصوصيتها',
-        titleEn: 'Data Privacy',
-        question: 'هل حصلت على موافقة صريحة ومسبقة من العميل لاستخدام بياناته في هذا الإعلان؟',
-        explanation: 'نظام حماية البيانات الشخصية يمنع استخدام بيانات العميل دون موافقته الصريحة والمستقلة.',
-        dos: {
-          title: '✅ ممتثل',
-          example: 'ضع مربع اختيار منفصل وغير محدد مسبقاً نصه "أوافق على استقبال عروض تسويقية".',
-          reason: 'لأن هذا الأسلوب يسهم في التوافق مع متطلبات المادة (5) من نظام حماية البيانات الشخصية، التي تُلزم بالحصول على موافقة صريحة ومستقلة من صاحب البيانات قبل معالجتها لأغراض تسويقية.'
-        },
-        donts: {
-          title: '⚠️ قد يعرّضك للمساءلة',
-          example: 'استخدام أرقام هواتف العملاء من فواتير سابقة لإرسال رسائل ترويجية.',
-          reason: 'لأن هذا الإجراء قد لا يتوافق مع متطلبات المادة (5) من نظام حماية البيانات الشخصية (PDPL) التي تشترط الموافقة الصريحة، وقد يندرج تحت المادة (3) من نظام مكافحة جرائم المعلوماتية في حال الوصول غير المشروع للبيانات، والمادة (6) في حال المساس بالقيم الدينية أو الآداب العامة.'
-        }
-      },
-      {
-        id: 'clarity',
-        weight: 2,
-        visibleFor: ['general_audience', 'private_data', 'retargeting', 'offline_ads'],
-        title: 'الوضوح والصدق',
-        titleEn: 'Clarity & Honesty',
-        question: 'هل يخلو إعلانك من عبارات مضللة أو مبالغ فيها (مثل "الأفضل" أو "الأرخص" المطلقة)؟',
-        explanation: 'الإعلان يُعتبر وثيقة تعاقدية مُلزمة. كل عبارة قد تكون دليلاً ضدك في المحكمة.',
-        dos: {
-          title: '✅ ممتثل',
-          example: 'استخدم عبارات دقيقة مثل "من بين الخيارات المتاحة" أو "بسعر تنافسي".',
-          reason: 'لأن هذا الأسلوب يتوافق مع متطلبات المادة (11/أ) من نظام التجارة الإلكترونية، التي تحظر العرض أو البيان الكاذب أو المضلل، والمادة (2) من نظام مكافحة الغش التجاري التي تحظر الخداع في ذاتية المنتج أو صفاته.'
-        },
-        donts: {
-          title: '⚠️ قد يعرّضك للمساءلة',
-          example: 'كتابة "الأفضل" أو "الأرخص" بدون إثبات أو تحفظ.',
-          reason: 'لأن هذا الإجراء قد لا يتوافق مع المادة (11/أ) من نظام التجارة الإلكترونية، والمادة (2) من نظام مكافحة الغش التجاري (الخداع)، وقد يندرج تحت (الاحتيال المعلوماتي) إذا ترتب عليه الاستيلاء على مال.'
-        }
-      },
-      {
-        id: 'disclosure',
-        weight: 2,
-        visibleFor: ['general_audience', 'private_data', 'retargeting', 'offline_ads'],
-        title: 'الإفصاح والشفافية',
-        titleEn: 'Disclosure',
-        question: 'إذا كان الإعلان عبر مؤثر، هل تم الإشارة بوضوح إلى أنه "إعلان" وهل يحمل ترخيص "موثوق"؟',
-        explanation: 'المؤثر شريكك في المسؤولية. عدم الإفصاح عن الإعلان يعرضك لغرامات كبيرة.',
-        dos: {
-          title: '✅ ممتثل',
-          example: 'ضع علامة واضحة مثل "إعلان" أو "#ad" في بداية المنشور.',
-          reason: 'لأن هذا الأسلوب يسهم في التوافق مع متطلبات المادة (5) من نظام الإعلام المرئي والمسموع، التي تُلزم بالإفصاح الواضح عن طبيعة المحتوى الإعلاني، والمادة (2) من نظام مكافحة الغش التجاري (الخداع).'
-        },
-        donts: {
-          title: '⚠️ قد يعرّضك للمساءلة',
-          example: 'إخفاء طبيعة المنشور أو عدم التأكد من ترخيص المؤثر.',
-          reason: 'لأن هذا الإجراء قد لا يتوافق مع متطلبات المادة (5) من نظام الإعلام المرئي والمسموع (الإعلان المستتر)، والمادة (2) من نظام مكافحة الغش التجاري (الخداع)، وقد يترتب عليه عقوبات بموجب المادة (6) من نظام مكافحة جرائم المعلوماتية إذا كان المحتوى يمس بالنظام العام.'
-        }
-      },
-      {
-        id: 'values',
-        weight: 2,
-        visibleFor: ['general_audience', 'private_data', 'retargeting', 'offline_ads'],
-        title: 'القيم والذوق العام',
-        titleEn: 'Values and Public Decency',
-        question: 'هل يتوافق المحتوى الإعلاني مع القيم الدينية والأخلاقية والاجتماعية في المملكة، ويراعي ضوابط المظهر العام وحماية الخصوصية؟',
-        explanation: 'الضوابط الجديدة للهيئة العامة لتنظيم الإعلام (سبتمبر 2025) تشدد على حماية الخصوصية والمظهر العام ومنع التنمّر.',
-        dos: {
-          title: '✅ ممتثل',
-          example: 'اختبر إعلانك مع مجموعة متنوعة من الأشخاص قبل النشر، وتجنب تصوير الأطفال أو العمالة المنزلية.',
-          reason: 'لأن هذا الأسلوب يسهم في التوافق مع متطلبات المادة (6) من نظام مكافحة جرائم المعلوماتية (عدم المساس بالآداب العامة)، والمادة (4) من لائحة المحافظة على الذوق العام (الزي واللباس).'
-        },
-        donts: {
-          title: '⚠️ قد يعرّضك للمساءلة',
-          example: 'استخدام محتوى يسيء للقيم، أو تصوير خلافات أسرية، أو ارتداء ملابس مخالفة لضوابط المظهر العام.',
-          reason: 'لأن هذا الإجراء قد لا يتوافق مع متطلبات المادة (6) من نظام مكافحة جرائم المعلوماتية (المساس بالآداب العامة والقيم الدينية)، والمادة (4) من لائحة المحافظة على الذوق العام، بالإضافة إلى الضوابط الجديدة للهيئة العامة لتنظيم الإعلام (سبتمبر 2025) المتعلقة بحماية الخصوصية والمظهر العام.'
-        }
-      },
-      {
-        id: 'ip',
-        weight: 1,
-        visibleFor: ['general_audience', 'private_data', 'retargeting', 'offline_ads'],
-        title: 'حقوق الملكية الفكرية',
-        titleEn: 'IP Rights',
-        question: 'هل جميع الصور والموسيقى والمحتويات مملوكة لك أو لديك ترخيص رسمي؟',
-        explanation: 'استخدام محتوى بدون إذن قد يعرضك لدعاوى قانونية وغرامات كبيرة.',
-        dos: {
-          title: '✅ ممتثل',
-          example: 'استخدم محتوى من مصادر موثوقة مثل Unsplash أو Pexels أو اشتر ترخيصاً.',
-          reason: 'لأن هذا الأسلوب يسهم في التوافق مع متطلبات المادة (22) من نظام حماية حقوق المؤلف، التي تمنع استخدام المصنفات دون إذن مسبق، والمادة (12) من ذات النظام التي تنص على حق المؤلف في استغلال مصنفه.'
-        },
-        donts: {
-          title: '⚠️ قد يعرّضك للمساءلة',
-          example: 'نسخ صور أو موسيقى من مواقع أخرى بدون إذن.',
-          reason: 'لأن هذا الإجراء قد لا يتوافق مع متطلبات المادة (22) من نظام حماية حقوق المؤلف، والمادة (12) من ذات النظام'
-        }
-      },
-      {
-        id: 'municipal',
-        weight: 2,
-        visibleFor: ['offline_ads'],
-        title: 'ترخيص الإعلان المادي',
-        titleEn: 'Municipal License',
-        question: 'هل حصلت على ترخيص من الجهة المختصة (البلدية) لعرض إعلانك المادي (لوحات، مطبوعات، إلخ)؟',
-        explanation: 'الإعلانات الخارجية تخضع لرقابة البلدية وتتطلب ترخيصاً مسبقاً.',
-        dos: {
-          title: '✅ ممتثل',
-          example: 'عرض الإعلان بعد الحصول على تصريح رسمي من البلدية.',
-          reason: 'لأن هذا الأسلوب يسهم في التوافق مع متطلبات قواعد تنظيم لوحات الدعاية والإعلان (المادة 2) التي تحدد مسؤولية البلديات عن تنظيم الإعلانات الخارجية، والمادة (15) التي تلزم بمراعاة الذوق السليم والآداب الإسلامية.'
-        },
-        donts: {
-          title: '⚠️ قد يعرّضك للمساءلة',
-          example: 'عرض إعلان على لوحة محل أو الشارع دون الحصول على ترخيص.',
-          reason: 'لأن هذا الإجراء قد لا يتوافق مع متطلبات قواعد تنظيم لوحات الدعاية والإعلان (المادة 2) التي تلزم بالحصول على ترخيص مسبق من الجهة المختصة (البلدية)، والمادة (15) التي تلزم بمراعاة الذوق السليم والآداب الإسلامية.'
-        }
-      }
-    ];
+  <aside class="legal-note shell">
+    <strong>تنبيه مهم</strong>
+    <p>هذه أداة استرشادية أولية، وليست فتوى أو استشارة قانونية. الأنظمة والاشتراطات قد تختلف بحسب النشاط والمنتج والجهة والمدينة وتفاصيل الإعلان.</p>
+    <span>آخر مراجعة للمحتوى: يوليو 2026</span>
+  </aside>
 
-    const campaignTypeLabels = {
-      'general_audience': 'إعلان للجمهور العام',
-      'private_data': 'إعلان لبيانات خاصة',
-      'retargeting': 'إعلان إعادة استهداف',
-      'offline_ads': 'إعلان مادي/غير رقمي'
-    };
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <a class="naif-brand" href="https://linktr.ee/almohammdin" target="_blank" rel="noopener">
+        <img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo.png" alt="نايف المحمدي">
+      </a>
+      <div>
+        <strong>تطوير وإشراف نايف المحمدي</strong>
+        <span>الإصدار 2.0.0</span>
+      </div>
+    </div>
+  </footer>
 
-    let selectedCampaignType = null;
+  <div id="imageExportStage" aria-hidden="true"></div>
 
-    // Initialize
-    function init() {
-      setupCampaignTypeRadios();
-      renderChecklist();
-      setupEventListeners();
-    }
-
-    function setupCampaignTypeRadios() {
-      const radios = document.querySelectorAll('input[name="campaignType"]');
-      radios.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          selectedCampaignType = e.target.value;
-          document.getElementById('startBtn').disabled = false;
-          document.getElementById('startBtn').classList.remove('opacity-60', 'cursor-not-allowed');
-        });
-      });
-    }
-
-    function renderChecklist() {
-      const container = document.getElementById('checklistContainer');
-      container.innerHTML = '';
-
-      items.forEach(item => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'acc glass rounded-xl border border-white/10';
-        itemEl.id = `q-${item.id}-wrap`;
-        itemEl.style.display = 'none'; // Hidden by default
-
-        itemEl.innerHTML = `
-          <div class="p-4 flex gap-4 items-start">
-            <input class="cb mt-1" type="checkbox" id="item-${item.id}" data-item-id="${item.id}" />
-            <div class="flex-1">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <div class="h-sec text-white">${item.title} <span class="t-en">(${item.titleEn})</span></div>
-                  <div class="text-white/75 t-regular">
-                    ${item.question}
-                    <span class="text-white/55 text-sm">• وزن ${item.weight}</span>
-                  </div>
-                </div>
-                <button type="button" class="btn rounded-lg px-3 py-2 text-sm font-semibold inline-flex items-center gap-2" data-acc-toggle aria-expanded="false">
-                  تفاصيل
-                  <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-
-              <div class="acc-body">
-                <div class="px-4 pb-4 pt-2">
-                  <h3 class="h-sec text-white/90">شرح البند</h3>
-                  <p class="mt-2 text-white/75 t-regular leading-relaxed">${item.explanation}</p>
-                  
-                  <div class="mt-4 glass rounded-xl p-4 border border-white/10">
-                    <div class="h-sec text-white/90">أمثلة وتبريرات قانونية</div>
-                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <!-- Compliant Section -->
-                      <div class="rounded-xl border border-white/10 bg-white/5 p-3">
-                        <div class="font-semibold text-emerald-200">${item.dos.title}</div>
-                        <div class="text-white/75 t-regular text-sm mt-1">${item.dos.example}</div>
-                        <div class="mt-2 pt-2 border-t border-white/10">
-                          <div class="font-semibold text-white/80 text-xs">لماذا؟</div>
-                          <div class="text-white/60 t-regular text-xs mt-1">${item.dos.reason}</div>
-                        </div>
-                      </div>
-                      <!-- Non-Compliant Section -->
-                      <div class="rounded-xl border border-white/10 bg-white/5 p-3">
-                        <div class="font-semibold text-red-200">${item.donts.title}</div>
-                        <div class="text-white/75 t-regular text-sm mt-1">${item.donts.example}</div>
-                        <div class="mt-2 pt-2 border-t border-white/10">
-                          <div class="font-semibold text-white/80 text-xs">لماذا؟</div>
-                          <div class="text-white/60 t-regular text-xs mt-1">${item.donts.reason}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="mt-3 p-3 rounded-lg bg-white/5 border border-white/10">
-                    <div class="text-white/80 t-regular text-sm">
-                      <strong>إرشاد:</strong> ضع علامة "صح" فقط إذا كنت متأكداً من تطبيق هذا البند بشكل كامل.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        container.appendChild(itemEl);
-
-        // Setup accordion toggle
-        const toggleBtn = itemEl.querySelector('[data-acc-toggle]');
-        toggleBtn.addEventListener('click', () => {
-          itemEl.classList.toggle('open');
-          toggleBtn.setAttribute('aria-expanded', itemEl.classList.contains('open'));
-        });
-
-        // Setup checkbox
-        const checkbox = itemEl.querySelector(`input[type="checkbox"]`);
-        checkbox.addEventListener('change', updateScore);
-      });
-
-      updateVisibility();
-    }
-
-    function updateVisibility() {
-      items.forEach(item => {
-        const wrap = document.getElementById(`q-${item.id}-wrap`);
-        if (selectedCampaignType && item.visibleFor.includes(selectedCampaignType)) {
-          wrap.style.display = 'block';
-        } else {
-          wrap.style.display = 'none';
-          document.getElementById(`item-${item.id}`).checked = false;
-        }
-      });
-      updateScore();
-    }
-
-    function updateScore() {
-      let earnedWeight = 0;
-      let totalWeight = 0;
-
-      items.forEach(item => {
-        if (selectedCampaignType && item.visibleFor.includes(selectedCampaignType)) {
-          totalWeight += item.weight;
-          if (document.getElementById(`item-${item.id}`).checked) {
-            earnedWeight += item.weight;
-          }
-        }
-      });
-
-      const score = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 0;
-
-      // Update gauge
-      const circumference = 2 * Math.PI * 108;
-      const offset = circumference * (1 - score / 100);
-      document.getElementById('ringFg').style.strokeDasharray = circumference;
-      document.getElementById('ringFg').style.strokeDashoffset = offset;
-
-      // Update color
-      let color = '#ef4444'; // Red
-      let label = 'منطقة خطر';
-      if (score >= 81) {
-        color = '#22c55e'; // Green
-        label = 'ممتاز';
-      } else if (score >= 41) {
-        color = '#eab308'; // Yellow
-        label = 'تحتاج مراجعة';
-      }
-      document.getElementById('ringFg').setAttribute('stroke', color);
-      document.getElementById('scoreNumber').textContent = score + '%';
-      document.getElementById('scoreLabel').textContent = label;
-
-      // Update stats
-      document.getElementById('earnedWeight').textContent = earnedWeight;
-      document.getElementById('totalWeight').textContent = totalWeight;
-
-      // Update report
-      updateReport(score, earnedWeight, totalWeight);
-    }
-
-    function updateReport(score, earned, total) {
-      const reportEl = document.getElementById('reportText');
-      let html = '';
-
-      if (score === 100) {
-        html = `<div class="text-emerald-200 font-semibold">✅ وضعك الإعلاني يبدو في اتجاه آمن</div>
-                <p class="mt-2">تبدو حملتك متوافقة مع المتطلبات الأساسية. أنت على الطريق الصحيح. استمر في توثيق موافقاتك.</p>
-                <p class="mt-3 text-white/70 text-sm">ملاحظة: لتحقيق مستوى امتثال أفضل وتقليل المخاطر النظامية، يُنصح بمراجعة خبير مختص قبل الإطلاق.</p>`;
-      } else if (score >= 81) {
-        html = `<div class="text-yellow-200 font-semibold">⚠️ هناك نقاط تحتاج انتباه</div>
-                <p class="mt-2">أنت تغطي معظم الجوانب الأساسية. تأكد من معالجة البنود المتبقية لتحسين مستوى التوافق.</p>
-                <p class="mt-3 text-white/70 text-sm">ملاحظة: لتحقيق مستوى امتثال أفضل وتقليل المخاطر النظامية، يُنصح بمراجعة خبير مختص قبل الإطلاق.</p>`;
-      } else if (score >= 41) {
-        html = `<div class="text-orange-200 font-semibold">⚠️ مستوى امتثال منخفض - بحاجة لمراجعة</div>
-                <p class="mt-2">أنت في منتصف الطريق، لكن لا تزال هناك فجوات قانونية قد تعرضك للمخاطر. ركز على البنود التالية:</p>`;
-      } else {
-        html = `<div class="text-red-200 font-semibold">🔴 مخاطر عالية – لا تطلق الإعلان قبل المراجعة</div>
-                <p class="mt-2">عدم الالتزام بالمتطلبات الأساسية يعرضك لمخاطر نظامية جسيمة. ابدأ فوراً بمعالجة البنود التالية:</p>`;
-      }
-
-      // Add unchecked items
-      if (score < 100) {
-        html += '<ul class="mt-3 space-y-2">';
-        items.forEach(item => {
-          if (selectedCampaignType && item.visibleFor.includes(selectedCampaignType)) {
-            if (!document.getElementById(`item-${item.id}`).checked) {
-              html += `<li class="text-white/75">• <strong>${item.title}</strong>: ${item.question}</li>`;
-            }
-          }
-        });
-        html += '</ul>';
-
-      }
-
-      reportEl.innerHTML = html;
-    }
-
-    // Start button
-    document.getElementById('startBtn').addEventListener('click', () => {
-      document.getElementById('welcomeOverlay').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('campaignBadge').textContent = campaignTypeLabels[selectedCampaignType];
-      updateVisibility();
-    });
-
-    // Print button
-    document.getElementById('printBtn').addEventListener('click', () => {
-      window.print();
-    });
-
-    // Reset button
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-      updateScore();
-    });
-
-    // Change Campaign button
-    document.getElementById('changeCampaignBtn').addEventListener('click', () => {
-      document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('welcomeOverlay').classList.remove('hidden');
-      document.querySelectorAll('input[name="campaignType"]').forEach(radio => radio.checked = false);
-      document.getElementById('startBtn').disabled = true;
-      document.getElementById('startBtn').classList.add('opacity-60', 'cursor-not-allowed');
-      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-      updateScore();
-      selectedCampaignType = null;
-      window.scrollTo(0, 0);
-    });
-
-    init();
-  </script>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
