@@ -23,7 +23,7 @@
 
   const CHANNELS = [
     { id: "social", label: "منصات التواصل", icon: "social" },
-    { id: "messages", label: "SMS أو WhatsApp", icon: "message" },
+    { id: "messages", label: "واتساب والرسائل النصية (SMS)", icon: "message" },
     { id: "email", label: "البريد الإلكتروني", icon: "mail" },
     { id: "calls", label: "مكالمات تسويقية", icon: "phone" },
     { id: "website", label: "موقع أو تطبيق", icon: "web" },
