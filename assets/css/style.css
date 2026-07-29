@@ -26,13 +26,21 @@
 * { box-sizing: border-box; }
 
 html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   background: var(--paper);
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   min-width: 320px;
+  overflow-x: hidden;
+  overflow-x: clip;
   background:
     linear-gradient(rgba(247, 245, 239, .96), rgba(247, 245, 239, .97)),
     url("../images/brand-pattern.svg") right -70px top 105px / 480px 300px no-repeat,
@@ -43,6 +51,29 @@ body {
   font-size: 16px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
+}
+
+main,
+.site-header,
+.site-footer,
+.shell,
+.hero,
+.hero-copy,
+.hero-panel,
+.tool-view,
+.profile-grid,
+.form-card,
+.question-module,
+.result-grid,
+.result-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img,
+svg,
+canvas {
+  max-width: 100%;
 }
 
 button,
@@ -1149,14 +1180,16 @@ input:focus-visible {
 #imageExportStage {
   position: fixed;
   top: 0;
-  left: 0;
+  right: auto;
+  left: -10000px;
   z-index: 0;
   width: 1080px;
   height: 1350px;
   overflow: hidden;
   background: #f7f5ef;
   pointer-events: none;
-  transform: translateX(-200vw);
+  transform: none;
+  contain: strict;
 }
 
 .share-card {
@@ -1879,7 +1912,7 @@ input:focus-visible {
     height: 11mm;
     display: block;
     flex: 0 0 auto;
-    background: url("../images/naif-logo-navy.png?v=2.0.19") center / contain no-repeat;
+    background: url("../images/naif-logo-navy.png?v=2.0.20") center / contain no-repeat;
   }
 
   .print-report-footer-naif img {
@@ -2083,7 +2116,7 @@ body.preview-open {
   .hero {
     min-height: auto;
     padding-block: 50px 55px;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 38px;
   }
   .hero h1 { font-size: clamp(36px, 10vw, 52px); }
