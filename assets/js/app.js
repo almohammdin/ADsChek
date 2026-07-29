@@ -85,7 +85,7 @@
     copyright: {
       title: "نظام حقوق المؤلف الجديد",
       url: "https://www.uqn.gov.sa/details?p=28845",
-      linkLabel: "نظام حقوق المؤلف الجديد (قبل النفاذ)",
+      linkLabel: "نظام حقوق المؤلف الجديد — يُعمل به بدءًا من 12 أغسطس 2026 (بعد 180 يومًا من نشره في 13 فبراير 2026)",
       extraTitle: "مشروع اللائحة التنفيذية لنظام حقوق المؤلف",
       extraUrl: "https://istitlaa.ncc.gov.sa/ar/Trade/SAIP/IRCopyright/Pages/default.aspx"
     },
