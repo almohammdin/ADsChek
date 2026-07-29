@@ -602,7 +602,7 @@
   }
 
   function calculateResult() {
-    const factor = { yes: 1, partial: .5, no: 0, unknown: .7 };
+    const factor = { yes: 1, partial: .5, no: 0, unknown: .35 };
     const totalWeight = state.activeRules.reduce((sum, rule) => sum + rule.weight, 0);
     const earned = state.activeRules.reduce((sum, rule) => sum + rule.weight * factor[state.answers[rule.id]], 0);
     const score = totalWeight ? Math.round(earned / totalWeight * 100) : 0;
@@ -794,10 +794,6 @@
     };
     const selectedChannels = CHANNELS.filter(item => state.channels.has(item.id));
     const selectedFeatures = FEATURES.filter(item => state.features.has(item.id));
-    const chunks = (items, size) => Array.from(
-      { length: Math.ceil(items.length / size) },
-      (_, index) => items.slice(index * size, (index + 1) * size)
-    );
     const reportHeader = () => `
       <header class="print-report-header">
         <div class="print-report-brand">
@@ -827,7 +823,7 @@
           <strong class="print-report-page-number">__REPORT_PAGINATION__</strong>
         </div>
         <div class="print-report-footer-naif">
-          <img src="assets/images/naif-logo-navy.png?v=2.0.18" alt="نايف المحمدي">
+          <img src="assets/images/naif-logo-navy.png?v=2.0.19" alt="نايف المحمدي">
         </div>
       </footer>
     `;
@@ -856,55 +852,48 @@
       </tr>`;
     }).join("");
 
-    const firstIssues = result.issues.slice(0, 3);
-    const remainingIssues = result.issues.slice(3);
-    let detailPages;
+    const questionTableNumber = result.issues.length ? 2 : 1;
+    const issueTable = (items, firstOnPage = false) => `
+      <section class="print-report-section ${firstOnPage ? "print-report-section--first" : ""}">
+        <table class="print-report-table">
+          <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
+          <thead>
+            <tr class="print-report-table-title"><th colspan="3"><span>الجدول 1</span><strong>النقاط التي تحتاج إلى تعديل</strong></th></tr>
+            <tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr>
+          </thead>
+          <tbody>${issueRows(items)}</tbody>
+        </table>
+      </section>
+    `;
+    const questionTable = (items, firstOnPage = false) => `
+      <section class="print-report-section ${firstOnPage ? "print-report-section--first" : ""}">
+        <table class="print-report-table print-report-table--questions">
+          <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
+          <thead>
+            <tr class="print-report-table-title"><th colspan="3"><span>الجدول ${questionTableNumber}</span><strong>سجل الأسئلة والإجابات</strong></th></tr>
+            <tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr>
+          </thead>
+          <tbody>${questionRows(items)}</tbody>
+        </table>
+      </section>
+    `;
+    const lineCount = (text, length) => Math.max(1, Math.ceil(String(text || "").length / length));
+    const issueHeight = item => 6 + Math.max(lineCount(item.question, 48), lineCount(item.fix, 62)) * 4.2;
+    const questionHeight = item => 6 + Math.max(lineCount(item.module, 20), lineCount(item.question, 68)) * 4.2;
+    const takeRows = (items, capacity, estimate) => {
+      const selected = [];
+      let used = 0;
+      for (const item of items) {
+        const height = estimate(item);
+        if (selected.length && used + height > capacity) break;
+        selected.push(item);
+        used += height;
+      }
+      return { selected, used };
+    };
 
-    if (remainingIssues.length <= 4 && state.activeRules.length <= 12) {
-      detailPages = [reportPage(`
-        ${remainingIssues.length ? `
-          <section class="print-report-section print-report-section--first">
-            <h3>تكملة النقاط التي تحتاج إلى تعديل</h3>
-            <table class="print-report-table">
-              <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
-              <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
-              <tbody>${issueRows(remainingIssues)}</tbody>
-            </table>
-          </section>
-        ` : ""}
-        <section class="print-report-section ${remainingIssues.length ? "" : "print-report-section--first"}">
-          <h3>سجل الأسئلة والإجابات</h3>
-          <table class="print-report-table">
-            <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
-            <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
-            <tbody>${questionRows(state.activeRules)}</tbody>
-          </table>
-        </section>
-      `, "print-report-page--details")];
-    } else {
-      const remainingIssuePages = chunks(remainingIssues, 5).map((items, index) => reportPage(`
-        <section class="print-report-section print-report-section--first">
-          <h3>تكملة النقاط التي تحتاج إلى تعديل ${index + 1}</h3>
-          <table class="print-report-table">
-            <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
-            <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
-            <tbody>${issueRows(items)}</tbody>
-          </table>
-        </section>
-      `, "print-report-page--details"));
-      const questionPages = chunks(state.activeRules, 10).map((items, index, all) => reportPage(`
-        <section class="print-report-section print-report-section--first">
-          <h3>${index ? "تكملة سجل الأسئلة والإجابات" : "سجل الأسئلة والإجابات"} <small>${index + 1} من ${all.length}</small></h3>
-          <table class="print-report-table">
-            <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
-            <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
-            <tbody>${questionRows(items)}</tbody>
-          </table>
-        </section>
-      `, "print-report-page--details"));
-      detailPages = [...remainingIssuePages, ...questionPages];
-    }
-
+    const firstIssuePack = takeRows(result.issues, 82, issueHeight);
+    const firstIssues = firstIssuePack.selected;
     const firstPage = reportPage(`
       <div class="print-report-title">
         <small>تقرير استرشادي قبل النشر</small>
@@ -938,17 +927,48 @@
           ${selectedFeatures.map(item => `<span class="print-report-chip">${escapeHtml(item.label)}</span>`).join("")}
         </div>
       </section>
-      <section class="print-report-section">
-        <h3>${result.issues.length ? "النقاط التي تحتاج إلى تعديل" : "نتيجة المراجعة"}</h3>
-        ${firstIssues.length ? `
-          <table class="print-report-table">
-            <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
-            <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
-            <tbody>${issueRows(firstIssues)}</tbody>
-          </table>
-        ` : `<div class="print-report-note">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>`}
-      </section>
+      ${firstIssues.length ? issueTable(firstIssues) : `
+        <section class="print-report-section">
+          <div class="print-report-note">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>
+        </section>
+      `}
     `);
+
+    const tableGroups = [];
+    const remainingIssues = result.issues.slice(firstIssues.length);
+    if (remainingIssues.length) {
+      tableGroups.push({ items: remainingIssues, estimate: issueHeight, render: issueTable });
+    }
+    tableGroups.push({ items: state.activeRules, estimate: questionHeight, render: questionTable });
+
+    const detailPages = [];
+    let pageSections = [];
+    let remainingCapacity = 255;
+    const flushPage = () => {
+      if (!pageSections.length) return;
+      detailPages.push(reportPage(pageSections.join(""), "print-report-page--details"));
+      pageSections = [];
+      remainingCapacity = 255;
+    };
+
+    for (const group of tableGroups) {
+      let remainingRows = [...group.items];
+      while (remainingRows.length) {
+        const firstOnPage = pageSections.length === 0;
+        const sectionCost = (firstOnPage ? 15 : 20);
+        const available = remainingCapacity - sectionCost;
+        if (available < 14 && !firstOnPage) {
+          flushPage();
+          continue;
+        }
+        const packed = takeRows(remainingRows, Math.max(14, available), group.estimate);
+        pageSections.push(group.render(packed.selected, firstOnPage));
+        remainingCapacity -= sectionCost + packed.used;
+        remainingRows = remainingRows.slice(packed.selected.length);
+        if (remainingRows.length) flushPage();
+      }
+    }
+    flushPage();
 
     const reportPages = [firstPage, ...detailPages];
     const numberedReportPages = reportPages.map((page, index) => page.replace(
@@ -1049,7 +1069,7 @@
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="assets/images/naif-logo-navy.png?v=2.0.18" alt="نايف المحمدي">
+              <img src="assets/images/naif-logo-navy.png?v=2.0.19" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
                 <span>almohammdin.github.io/ADsChek</span>
