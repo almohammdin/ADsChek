@@ -1754,6 +1754,29 @@ input:focus-visible {
     font-size: 8.2pt;
   }
 
+  .print-report-table-title th {
+    padding: 0 0 2mm;
+    border: 0;
+    border-bottom: 1pt solid #dfe4e8;
+    background: transparent;
+  }
+
+  .print-report-table-title th > span {
+    display: inline-block;
+    margin-inline-end: 2.5mm;
+    padding: .8mm 2mm;
+    border-radius: 99px;
+    background: #07345b;
+    color: #fff;
+    font-size: 7pt;
+    font-weight: 700;
+  }
+
+  .print-report-table-title th > strong {
+    color: #07345b;
+    font-size: 13pt;
+  }
+
   .print-report-table td {
     color: #465564;
     font-size: 8pt;
@@ -1856,7 +1879,7 @@ input:focus-visible {
     height: 11mm;
     display: block;
     flex: 0 0 auto;
-    background: url("../images/naif-logo-navy.png?v=2.0.18") center / contain no-repeat;
+    background: url("../images/naif-logo-navy.png?v=2.0.19") center / contain no-repeat;
   }
 
   .print-report-footer-naif img {
