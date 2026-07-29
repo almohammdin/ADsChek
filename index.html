@@ -1,11 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b1a2b">
   <meta name="description" content="أداة استرشادية تساعد المنشآت على مراجعة الإعلان قبل نشره وفق نوع الحملة ومحتواها والقنوات المستخدمة.">
-  <meta property="og:title" content="فاحص الإعلان | راجع إعلانك قبل النشر">
+  <meta property="og:title" content="فاحص الامتثال الإعلاني | راجع إعلانك قبل النشر">
   <meta property="og:description" content="فحص تفاعلي مبسط يحدد نقاط الإعلان التي تحتاج تعديلا قبل النشر.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://almohammdin.github.io/ADsChek/">
@@ -16,10 +16,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=2.0.3">
+  <link rel="stylesheet" href="assets/css/style.css?v=2.0.6">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script defer src="assets/js/app.js?v=2.0.5"></script>
-  <title>فاحص الإعلان | راجع إعلانك قبل النشر</title>
+  <script defer src="assets/js/app.js?v=2.0.6"></script>
+  <title>فاحص الامتثال الإعلاني | راجع إعلانك قبل النشر</title>
 </head>
 <body>
   <div class="top-accent" aria-hidden="true"></div>
@@ -31,8 +31,8 @@
           <img src="assets/images/adschek-icon-256.png" alt="">
         </span>
         <span>
-          <strong>فاحص الإعلان</strong>
-          <small>ADsChek</small>
+          <strong>فاحص الامتثال الإعلاني</strong>
+          <small>Ad Compliance Checker</small>
         </span>
       </a>
 
@@ -50,12 +50,12 @@
         </div>
       </div>
 
-      <div class="hero-panel" aria-label="ما الذي ستعرفه من الفحص">
+      <section class="hero-panel" aria-label="ما الذي ستعرفه من الفحص">
         <div class="panel-kicker">قبل الضغط على زر النشر</div>
         <div class="hero-check"><span>1</span><p><strong>هل ينطبق على الإعلان ترخيص؟</strong><small>مثل التخفيض أو المسابقة أو إعلان المؤثر.</small></p></div>
         <div class="hero-check"><span>2</span><p><strong>هل طريقة الوصول للجمهور سليمة؟</strong><small>خصوصا بيانات العملاء والرسائل والمكالمات.</small></p></div>
         <div class="hero-check"><span>3</span><p><strong>هل المحتوى والسعر والادعاءات واضحة؟</strong><small>بما في ذلك متطلبات المطاعم والمقاهي.</small></p></div>
-      </div>
+      </section>
     </section>
 
     <section class="tool-view shell" id="profileView" hidden>
@@ -109,10 +109,10 @@
         <button class="text-btn" type="button" data-action="edit-profile">تعديل وصف الإعلان</button>
       </div>
 
-      <div class="progress-wrap" aria-label="نسبة إكمال الأسئلة">
+      <section class="progress-wrap" aria-label="نسبة إكمال الأسئلة">
         <div class="progress-copy"><span id="progressText">0 من 0</span><strong id="progressPercent">0%</strong></div>
         <div class="progress-track"><span id="progressBar"></span></div>
-      </div>
+      </section>
 
       <div id="questionsRoot"></div>
 
@@ -152,7 +152,7 @@
         </a>
         <div class="footer-credit">
           <strong>تطوير وإشراف نايف المحمدي</strong>
-          <span>الإصدار 2.0.5</span>
+          <span>الإصدار 2.0.6</span>
         </div>
         <nav class="footer-social" aria-label="حساباتي">
           <a class="social-handle" href="https://linktr.ee/almohammdin" target="_blank" rel="noopener">Almohammdin</a>
