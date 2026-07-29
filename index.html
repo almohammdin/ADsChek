@@ -16,9 +16,75 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=2.0.18">
+  <link rel="stylesheet" href="assets/css/style.css?v=2.0.19">
+  <style>
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    main,
+    .site-header,
+    .site-footer,
+    .shell,
+    .hero,
+    .hero-copy,
+    .hero-panel,
+    .tool-view,
+    .profile-grid,
+    .form-card,
+    .question-module,
+    .result-grid,
+    .result-card {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    img,
+    svg,
+    canvas {
+      max-width: 100%;
+    }
+
+    #imageExportStage {
+      left: -10000px !important;
+      right: auto !important;
+      transform: none !important;
+      contain: strict;
+    }
+
+    @media (max-width: 820px) {
+      .shell {
+        width: min(calc(100% - 28px), 720px);
+      }
+
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .shell {
+        width: calc(100% - 24px);
+      }
+
+      .hero h1 {
+        font-size: clamp(32px, 10vw, 44px);
+        overflow-wrap: anywhere;
+      }
+
+      .hero-copy > p,
+      .hero-panel,
+      .hero-check p,
+      .hero-check strong,
+      .hero-check small {
+        overflow-wrap: anywhere;
+      }
+    }
+  </style>
   <script defer src="assets/js/vendor/html2canvas.min.js?v=1.4.1"></script>
-  <script defer src="assets/js/app.js?v=2.0.18"></script>
+  <script defer src="assets/js/app.js?v=2.0.19"></script>
   <title>فاحص الامتثال الإعلاني | مراجعة الحملة الإعلانية قبل النشر</title>
 </head>
 <body>
@@ -156,7 +222,7 @@
         </a>
         <div class="footer-credit">
           <strong>تطوير وإشراف نايف المحمدي</strong>
-          <span>الإصدار 2.0.18</span>
+          <span>الإصدار 2.0.19</span>
         </div>
         <nav class="footer-social" aria-label="حساباتي">
           <a class="social-handle" href="https://linktr.ee/almohammdin" target="_blank" rel="noopener">Almohammdin</a>
