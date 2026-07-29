@@ -85,7 +85,7 @@
     copyright: {
       title: "نظام حقوق المؤلف الجديد",
       url: "https://www.uqn.gov.sa/details?p=28845",
-      linkLabel: "نظام حقوق المؤلف الجديد — يُعمل به بدءًا من 12 أغسطس 2026 (بعد 180 يومًا من نشره في 13 فبراير 2026)",
+      linkLabel: "نظام حقوق المؤلف الجديد — يُعمل به بدءًا من 12 أغسطس 2026",
       extraTitle: "مشروع اللائحة التنفيذية لنظام حقوق المؤلف",
       extraUrl: "https://istitlaa.ncc.gov.sa/ar/Trade/SAIP/IRCopyright/Pages/default.aspx"
     },
@@ -716,13 +716,11 @@
       year: "numeric", month: "long", day: "numeric"
     }).format(new Date());
 
-    const brandIcon = document.querySelector(".brand-mark").innerHTML;
     $("imageExportStage").innerHTML = `
       <div class="share-card" style="--status-color:${result.level.color};--status-bg:${result.level.bg}">
         <div class="share-top">
           <div class="share-brand">
-            <span class="brand-mark">${brandIcon}</span>
-            <div><strong>فاحص الإعلان</strong><span>راجع إعلانك قبل أن تنشره</span></div>
+            <img class="share-logo" src="assets/images/adschek-logo.png" alt="فاحص الامتثال الإعلاني">
           </div>
           <div class="share-date">${date}</div>
         </div>
@@ -751,8 +749,30 @@
         <div class="share-good">تمت مراجعة ${state.activeRules.length} نقطة، منها ${result.positives.length} إجابة مطمئنة.</div>
 
         <div class="share-footer">
-          <img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo.png" alt="نايف المحمدي">
-          <div>نتيجة استرشادية مبنية على إجابات المستخدم ولا تعد استشارة قانونية. almohammdin.github.io/ADsChek</div>
+          <div class="share-owner">
+            <img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo.png" alt="نايف المحمدي">
+            <div>
+              <strong>فاحص الامتثال الإعلاني</strong>
+              <span>almohammdin.github.io/ADsChek</span>
+            </div>
+          </div>
+          <div class="share-accounts">
+            <strong>Almohammdin</strong>
+            <div class="share-social" aria-label="حسابات نايف المحمدي">
+              <span aria-label="إكس (X)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 2H22l-8.3 9.5L23.5 22h-7.7l-6-7.9L2.9 22H-.9l8.9-10.2L-1.4 2h7.9l5.4 7.2L18.2 2Zm-1.3 18h2.1L5.4 3.9H3.2L16.9 20Z"/></svg>
+              </span>
+              <span aria-label="لينكدإن (LinkedIn)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 7.9H1.7V22h3.6V7.9ZM3.5 2A2.1 2.1 0 1 0 3.5 6.2 2.1 2.1 0 0 0 3.5 2ZM22 13.9c0-4.2-2.2-6.2-5.2-6.2-2.4 0-3.5 1.3-4.1 2.2v-2H9.1V22h3.6v-7c0-1.8.3-3.6 2.6-3.6 2.2 0 2.3 2.1 2.3 3.7V22H22v-8.1Z"/></svg>
+              </span>
+              <span aria-label="سناب شات (Snapchat)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.1c-3.1 0-5.2 2.5-5.2 5.7 0 .8.1 1.7.2 2.4-.4.2-1 .3-1.5.1-.8-.3-1.3 1-.5 1.5.4.3 1.1.5 1.5.7-.5 1.2-1.5 2.3-3.1 3-.6.3-.5 1.2.1 1.4 1 .4 2 .5 2.8.7.3.1.5.7.8 1.2.2.3.6.4 1 .3.8-.2 1.6-.5 2.9-.5s2.1.3 2.9.5c.4.1.8 0 1-.3.3-.5.5-1.1.8-1.2.8-.2 1.8-.3 2.8-.7.6-.2.7-1.1.1-1.4-1.6-.7-2.6-1.8-3.1-3 .4-.2 1.1-.4 1.5-.7.8-.5.3-1.8-.5-1.5-.5.2-1.1.1-1.5-.1.1-.7.2-1.6.2-2.4 0-3.2-2.1-5.7-5.2-5.7Z"/></svg>
+              </span>
+              <span aria-label="لنك تري (Linktree)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.736 5.852 17.644 2l1.92 1.92-3.852 3.736h5.644v2.736h-5.66l3.868 3.752-1.92 1.92-5.276-5.28-5.276 5.28-1.92-1.92 3.868-3.752H3.38V7.656h5.644L5.172 3.92 7.092 2l3.932 3.852V0h2.712v5.852ZM11.024 24v-8.604h2.712V24h-2.712Z"/></svg>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -794,8 +814,8 @@
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: "نتيجة فحص الإعلان",
-          text: "نتيجة فحص الإعلان قبل النشر"
+          title: "نتيجة فاحص الامتثال الإعلاني",
+          text: "نتيجة فاحص الامتثال الإعلاني قبل النشر"
         });
         showToast("تم فتح خيارات المشاركة.");
       } else {
