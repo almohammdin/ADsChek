@@ -826,7 +826,7 @@
           فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
         </div>
         <div class="print-report-footer-naif">
-          <img src="assets/images/naif-logo.svg" alt="نايف المحمدي">
+          <img src="assets/images/naif-logo-navy.png" alt="نايف المحمدي">
         </div>
       </footer>
     `;
@@ -1015,7 +1015,7 @@
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="assets/images/naif-logo.svg" alt="نايف المحمدي">
+              <img src="assets/images/naif-logo-navy.png" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
                 <span>almohammdin.github.io/ADsChek</span>
