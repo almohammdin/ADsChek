@@ -562,7 +562,7 @@
                   </div>
                   <div class="answer-tip" role="tooltip">
                     <strong>كيف تجيب؟</strong>
-                    <span>اعتمد النسخة النهائية من الإعلان. مثال أو نقطة تحقق: ${rule.help}</span>
+                    <span>اعتمد النسخة النهائية من الإعلان. ${rule.help}</span>
                   </div>
                 </div>
               </div>
