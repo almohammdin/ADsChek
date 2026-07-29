@@ -730,17 +730,10 @@
     };
     const selectedChannels = CHANNELS.filter(item => state.channels.has(item.id));
     const selectedFeatures = FEATURES.filter(item => state.features.has(item.id));
-    const sourceKeys = [...new Set(state.activeRules.map(rule => rule.source).filter(Boolean))];
-    const sourceEntries = sourceKeys.flatMap(key => {
-      const source = SOURCES[key];
-      if (!source) return [];
-      const entries = [{ title: source.linkLabel || source.title, url: source.url }];
-      if (source.extraUrl) entries.push({ title: source.extraTitle, url: source.extraUrl });
-      return entries;
-    });
 
     $("printReportStage").innerHTML = `
       <article class="print-report" style="--report-status:${result.level.color}">
+        <img class="print-report-pattern" src="assets/images/brand-pattern-export.svg" alt="">
         <header class="print-report-header">
           <div class="print-report-brand">
             <img src="assets/images/adschek-icon-256.png" alt="">
@@ -829,21 +822,19 @@
           ` : `<div class="print-report-note">لا توجد نقاط مكتملة مسجلة ضمن الإجابات الحالية.</div>`}
         </section>
 
-        <section class="print-report-section">
-          <h3>المراجع المستخدمة في الفحص</h3>
-          <ol class="print-report-references">
-            ${sourceEntries.map(source => `<li><strong>${escapeHtml(source.title)}</strong><span>${escapeHtml(source.url)}</span></li>`).join("")}
-          </ol>
-        </section>
-
         <footer class="print-report-footer">
-          <div>
-            <strong>فحص استرشادي أولي</strong>
-            تخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
+          <div class="print-report-footer-tool">
+            <img src="assets/images/adschek-icon-256.png" alt="">
+            <div>
+              <strong>فاحص الامتثال الإعلاني</strong>
+              <span class="print-report-footer-link">almohammdin.github.io/ADsChek</span>
+            </div>
           </div>
-          <div class="print-report-footer-link">
-            <strong>almohammdin.github.io/ADsChek</strong>
-            الإصدار 2.0.13
+          <div class="print-report-footer-guidance">
+            فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
+          </div>
+          <div class="print-report-footer-naif">
+            <img src="assets/images/naif-logo.svg" alt="نايف المحمدي">
           </div>
         </footer>
       </article>
@@ -858,6 +849,16 @@
     try {
       renderPrintReport();
       await document.fonts.ready;
+      const reportImages = [...$("printReportStage").querySelectorAll("img")];
+      await Promise.all(reportImages.map(image => new Promise(resolve => {
+        if (image.complete) {
+          resolve();
+          return;
+        }
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+        setTimeout(resolve, 5000);
+      })));
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       window.print();
     } catch (error) {
