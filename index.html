@@ -16,9 +16,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=2.0.11">
+  <link rel="stylesheet" href="assets/css/style.css?v=2.0.12">
   <script defer src="assets/js/vendor/html2canvas.min.js?v=1.4.1"></script>
-  <script defer src="assets/js/app.js?v=2.0.11"></script>
+  <script defer src="assets/js/app.js?v=2.0.12"></script>
   <title>فاحص الامتثال الإعلاني | راجع إعلانك قبل النشر</title>
 </head>
 <body>
@@ -139,6 +139,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7 8m5-5 5 5M5 13v7h14v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           معاينة صورة النتيجة
         </button>
+        <button class="secondary-btn" id="printReport" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 17h10v4H7zM5 17H3v-7h18v7h-2M17 13h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          طباعة التقرير PDF
+        </button>
         <button class="secondary-btn" type="button" data-action="restart">فحص إعلان جديد</button>
       </div>
     </section>
@@ -152,7 +156,7 @@
         </a>
         <div class="footer-credit">
           <strong>تطوير وإشراف نايف المحمدي</strong>
-          <span>الإصدار 2.0.11</span>
+          <span>الإصدار 2.0.12</span>
         </div>
         <nav class="footer-social" aria-label="حساباتي">
           <a class="social-handle" href="https://linktr.ee/almohammdin" target="_blank" rel="noopener">Almohammdin</a>
@@ -174,6 +178,7 @@
     </div>
   </footer>
 
+  <div id="printReportStage" aria-hidden="true"></div>
   <div id="imageExportStage" aria-hidden="true"></div>
 
   <section class="image-preview" id="imagePreview" role="dialog" aria-modal="true" aria-labelledby="imagePreviewTitle" hidden>
