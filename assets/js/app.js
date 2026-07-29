@@ -602,7 +602,7 @@
   }
 
   function calculateResult() {
-    const factor = { yes: 1, partial: .5, no: 0, unknown: .25 };
+    const factor = { yes: 1, partial: .5, no: 0, unknown: .7 };
     const totalWeight = state.activeRules.reduce((sum, rule) => sum + rule.weight, 0);
     const earned = state.activeRules.reduce((sum, rule) => sum + rule.weight * factor[state.answers[rule.id]], 0);
     const score = totalWeight ? Math.round(earned / totalWeight * 100) : 0;
@@ -611,43 +611,97 @@
       .filter(rule => state.answers[rule.id] !== "yes")
       .map(rule => ({ ...rule, answer: state.answers[rule.id] }))
       .sort((a, b) => {
-        const answerRank = { no: 4, unknown: 3, partial: 2 };
+        const answerRank = { no: 4, partial: 3, unknown: 2 };
         const severityRank = { critical: 4, high: 3, medium: 2, low: 1 };
         return (severityRank[b.severity] * 10 + answerRank[b.answer])
           - (severityRank[a.severity] * 10 + answerRank[a.answer]);
       });
 
     const positives = state.activeRules.filter(rule => state.answers[rule.id] === "yes");
-    const blockers = issues.filter(rule => rule.severity === "critical" && ["no", "unknown", "partial"].includes(rule.answer));
+    const blockers = issues.filter(rule => rule.severity === "critical" && rule.answer === "no");
+    const incompleteCritical = issues.filter(rule => rule.severity === "critical" && rule.answer === "partial");
+    const uncertainCritical = issues.filter(rule => rule.severity === "critical" && rule.answer === "unknown");
 
     let level;
-    if (blockers.length || score < 55) {
-      level = {
-        key: "stop",
-        title: "الإعلان غير جاهز للنشر",
-        message: "توجد نقاط مؤثرة تحتاج إلى معالجة قبل نشر الإعلان.",
-        color: "#b33434",
-        bg: "#fff0ef"
-      };
-    } else if (issues.length || score < 85) {
-      level = {
-        key: "review",
-        title: "الإعلان يحتاج تعديلات",
-        message: "أكمل النقاط الموضحة أدناه ثم أعد الفحص قبل النشر.",
-        color: "#a56308",
-        bg: "#fff6e5"
-      };
-    } else {
+    if (score >= 90) {
       level = {
         key: "safe",
-        title: "الإعلان جاهز مبدئيا",
-        message: "إجاباتك لا تظهر مشكلة واضحة ضمن نطاق هذا الفحص الاسترشادي.",
+        title: "جاهزية مرتفعة",
+        message: "معظم نقاط الفحص مطبقة، مع بقاء ما يظهر أدناه من ملاحظات.",
         color: "#167a55",
         bg: "#edf8f3"
       };
+    } else if (score >= 75) {
+      level = {
+        key: "limited",
+        title: "جاهز مع ملاحظات محدودة",
+        message: "الجاهزية جيدة، وتحتاج النقاط الموضحة إلى استكمال أو تحقق.",
+        color: "#668b2b",
+        bg: "#f2f7e9"
+      };
+    } else if (score >= 55) {
+      level = {
+        key: "caution",
+        title: "يحتاج تعديلات مهمة",
+        message: "توجد فجوات مؤثرة، ويُنصح بإكمالها ثم إعادة الفحص.",
+        color: "#b98512",
+        bg: "#fff8e5"
+      };
+    } else if (score >= 35) {
+      level = {
+        key: "high",
+        title: "مخاطر مرتفعة",
+        message: "الإعلان يحتاج معالجة جوهرية قبل الانتقال إلى المراجعة النهائية.",
+        color: "#c8661a",
+        bg: "#fff2e8"
+      };
+    } else {
+      level = {
+        key: "severe",
+        title: "مخاطر شديدة",
+        message: "الفجوات الحالية واسعة، ويجب إعادة ضبط الإعلان قبل النشر.",
+        color: "#b33434",
+        bg: "#fff0ef"
+      };
     }
 
-    state.result = { score, issues, positives, blockers, level };
+    let decision;
+    if (blockers.length) {
+      decision = {
+        key: "stop",
+        title: blockers.length === 1 ? "مانع واحد قبل النشر" : `${blockers.length} موانع قبل النشر`,
+        message: "لا ينشر الإعلان حتى تُعالج النقاط المانعة الموضحة أدناه."
+      };
+    } else if (incompleteCritical.length || uncertainCritical.length) {
+      decision = {
+        key: "verify",
+        title: "استكمال أو تحقق قبل النشر",
+        message: `${incompleteCritical.length ? `${incompleteCritical.length} نقطة مؤثرة مطبقة جزئيا` : ""}${incompleteCritical.length && uncertainCritical.length ? "، و" : ""}${uncertainCritical.length ? `${uncertainCritical.length} نقطة مؤثرة غير محسومة` : ""}.`
+      };
+    } else if (score < 75) {
+      decision = {
+        key: "review",
+        title: "أكمل التعديلات قبل النشر",
+        message: "لا يظهر مانع مؤكد، لكن مستوى الجاهزية الحالي لا يكفي للانتقال إلى النشر."
+      };
+    } else {
+      decision = {
+        key: "clear",
+        title: "لا يظهر مانع قبل النشر",
+        message: "يمكن الانتقال إلى المراجعة النهائية داخل المنشأة قبل إطلاق الحملة."
+      };
+    }
+
+    state.result = {
+      score,
+      issues,
+      positives,
+      blockers,
+      incompleteCritical,
+      uncertainCritical,
+      level,
+      decision
+    };
     return state.result;
   }
 
@@ -658,17 +712,27 @@
     const partialCount = state.activeRules.filter(rule => state.answers[rule.id] === "partial").length;
 
     $("resultRoot").innerHTML = `
-      <section class="status-card ${result.level.key}" style="--score:${result.score * 3.6}deg">
-        <div class="score-dial">
-          <div><strong>${result.score}%</strong><span>جاهزية مبدئية</span></div>
-        </div>
+      <section class="status-card ${result.level.key}" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--readiness:${result.score}%">
         <div class="status-copy">
           <div class="result-campaign">${campaignName ? escapeHtml(campaignName) : "إعلان دون اسم محدد"}</div>
           <h3>${result.level.title}</h3>
           <p>${result.level.message}</p>
+          <div class="readiness-head">
+            <span>مؤشر الجاهزية والمخاطر</span>
+            <strong>${result.score}%</strong>
+          </div>
+          <div class="risk-meter" role="img" aria-label="جاهزية الإعلان ${result.score} بالمئة">
+            <div class="risk-meter-track"><span class="risk-meter-pointer"></span></div>
+            <div class="risk-meter-labels"><span>مخاطر أعلى</span><span>جاهزية أعلى</span></div>
+          </div>
+          <div class="publish-decision ${result.decision.key}">
+            <span class="publish-decision-icon" aria-hidden="true">${result.decision.key === "clear" ? "✓" : "!"}</span>
+            <div><strong>${result.decision.title}</strong><p>${result.decision.message}</p></div>
+          </div>
           <div class="result-summary">
             <span>${state.activeRules.length} نقطة تمت مراجعتها</span>
             <span>${result.positives.length} إجابة مطمئنة</span>
+            ${result.blockers.length ? `<span>${result.blockers.length} ${result.blockers.length === 1 ? "مانع مؤكد" : "موانع مؤكدة"}</span>` : ""}
             ${unknownCount ? `<span>${unknownCount} غير متأكد منها</span>` : ""}
             ${partialCount ? `<span>${partialCount} مطبقة جزئيا</span>` : ""}
           </div>
@@ -730,114 +794,138 @@
     };
     const selectedChannels = CHANNELS.filter(item => state.channels.has(item.id));
     const selectedFeatures = FEATURES.filter(item => state.features.has(item.id));
+    const chunks = (items, size) => Array.from(
+      { length: Math.ceil(items.length / size) },
+      (_, index) => items.slice(index * size, (index + 1) * size)
+    );
+    const reportHeader = () => `
+      <header class="print-report-header">
+        <div class="print-report-brand">
+          <img src="assets/images/adschek-icon-256.png" alt="">
+          <div>
+            <strong>فاحص الامتثال الإعلاني</strong>
+            <span>Ad Compliance Checker</span>
+          </div>
+        </div>
+        <div class="print-report-meta">
+          <strong>تقرير فحص الإعلان</strong>
+          <span>${date}</span>
+        </div>
+      </header>
+    `;
+    const reportFooter = () => `
+      <footer class="print-report-footer">
+        <div class="print-report-footer-tool">
+          <img src="assets/images/adschek-icon-256.png" alt="">
+          <div>
+            <strong>فاحص الامتثال الإعلاني</strong>
+            <span class="print-report-footer-link">almohammdin.github.io/ADsChek</span>
+          </div>
+        </div>
+        <div class="print-report-footer-guidance">
+          فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
+        </div>
+        <div class="print-report-footer-naif">
+          <img src="assets/images/naif-logo.svg" alt="نايف المحمدي">
+        </div>
+      </footer>
+    `;
+    const reportPage = content => `
+      <section class="print-report print-report-page">
+        <img class="print-report-pattern" src="assets/images/brand-pattern-export.svg" alt="">
+        ${reportHeader()}
+        <div class="print-report-page-content">${content}</div>
+        ${reportFooter()}
+      </section>
+    `;
+    const issueRows = issues => issues.map(issue => {
+      const answer = answerMeta[issue.answer] || { label: issue.answer, className: "" };
+      return `<tr>
+        <td>${escapeHtml(issue.question)}</td>
+        <td><span class="print-report-answer ${answer.className}">${answer.label}</span></td>
+        <td>${escapeHtml(issue.fix)}</td>
+      </tr>`;
+    }).join("");
+    const questionRows = rules => rules.map(rule => {
+      const answer = answerMeta[state.answers[rule.id]] || { label: "لم تتم الإجابة", className: "" };
+      return `<tr>
+        <td>${escapeHtml(rule.module)}</td>
+        <td>${escapeHtml(rule.question)}</td>
+        <td><span class="print-report-answer ${answer.className}">${answer.label}</span></td>
+      </tr>`;
+    }).join("");
+
+    const firstIssues = result.issues.slice(0, 3);
+    const remainingIssuePages = chunks(result.issues.slice(3), 5).map((items, index) => reportPage(`
+      <section class="print-report-section print-report-section--first">
+        <h3>تكملة النقاط التي تحتاج إلى تعديل ${index + 1}</h3>
+        <table class="print-report-table">
+          <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
+          <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
+          <tbody>${issueRows(items)}</tbody>
+        </table>
+      </section>
+    `));
+    const questionPages = chunks(state.activeRules, 8).map((items, index, all) => reportPage(`
+      <section class="print-report-section print-report-section--first">
+        <h3>${index ? "تكملة سجل الأسئلة والإجابات" : "سجل الأسئلة والإجابات"} <small>${index + 1} من ${all.length}</small></h3>
+        <table class="print-report-table">
+          <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
+          <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
+          <tbody>${questionRows(items)}</tbody>
+        </table>
+      </section>
+    `));
+
+    const firstPage = reportPage(`
+      <div class="print-report-title">
+        <small>تقرير استرشادي قبل النشر</small>
+        <h1>${campaignName ? escapeHtml(campaignName) : "إعلان دون اسم مدخل"}</h1>
+      </div>
+      <section class="print-report-summary">
+        <div>
+          <h2>${result.level.title}</h2>
+          <p>${result.level.message}</p>
+        </div>
+        <div class="print-report-readiness">
+          <div><span>مؤشر الجاهزية والمخاطر</span><strong>${result.score}%</strong></div>
+          <div class="print-risk-track"><span></span></div>
+          <div class="print-risk-labels"><span>مخاطر أعلى</span><span>جاهزية أعلى</span></div>
+        </div>
+        <div class="print-report-decision ${result.decision.key}">
+          <strong>${result.decision.title}</strong>
+          <span>${result.decision.message}</span>
+        </div>
+      </section>
+      <div class="print-report-facts">
+        <div class="print-report-fact"><span>النقاط التي تمت مراجعتها</span><strong>${state.activeRules.length}</strong></div>
+        <div class="print-report-fact"><span>نقاط تحتاج إلى معالجة</span><strong>${result.issues.length}</strong></div>
+        <div class="print-report-fact"><span>إجابات مطمئنة</span><strong>${result.positives.length}</strong></div>
+        <div class="print-report-fact"><span>موانع مؤكدة قبل النشر</span><strong>${result.blockers.length}</strong></div>
+      </div>
+      <section class="print-report-section">
+        <h3>نطاق الفحص</h3>
+        <div class="print-report-chips">
+          ${selectedChannels.map(item => `<span class="print-report-chip">القناة: ${escapeHtml(item.label)}</span>`).join("")}
+          ${selectedFeatures.map(item => `<span class="print-report-chip">${escapeHtml(item.label)}</span>`).join("")}
+        </div>
+      </section>
+      <section class="print-report-section">
+        <h3>${result.issues.length ? "النقاط التي تحتاج إلى تعديل" : "نتيجة المراجعة"}</h3>
+        ${firstIssues.length ? `
+          <table class="print-report-table">
+            <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
+            <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
+            <tbody>${issueRows(firstIssues)}</tbody>
+          </table>
+        ` : `<div class="print-report-note">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>`}
+      </section>
+    `);
 
     $("printReportStage").innerHTML = `
-      <article class="print-report" style="--report-status:${result.level.color}">
-        <img class="print-report-pattern" src="assets/images/brand-pattern-export.svg" alt="">
-        <header class="print-report-header">
-          <div class="print-report-brand">
-            <img src="assets/images/adschek-icon-256.png" alt="">
-            <div>
-              <strong>فاحص الامتثال الإعلاني</strong>
-              <span>Ad Compliance Checker</span>
-            </div>
-          </div>
-          <div class="print-report-meta">
-            <strong>تقرير فحص الإعلان</strong>
-            <span>${date}</span>
-          </div>
-        </header>
-
-        <div class="print-report-title">
-          <small>تقرير استرشادي قبل النشر</small>
-          <h1>${campaignName ? escapeHtml(campaignName) : "إعلان دون اسم مدخل"}</h1>
-        </div>
-
-        <section class="print-report-summary">
-          <div class="print-report-score">${result.score}%</div>
-          <div>
-            <h2>${result.level.title}</h2>
-            <p>${result.level.message}</p>
-          </div>
-        </section>
-
-        <div class="print-report-facts">
-          <div class="print-report-fact"><span>النقاط التي تمت مراجعتها</span><strong>${state.activeRules.length}</strong></div>
-          <div class="print-report-fact"><span>نقاط تحتاج إلى معالجة</span><strong>${result.issues.length}</strong></div>
-          <div class="print-report-fact"><span>إجابات مطمئنة</span><strong>${result.positives.length}</strong></div>
-        </div>
-
-        <section class="print-report-section">
-          <h3>نطاق الفحص</h3>
-          <div class="print-report-chips">
-            ${selectedChannels.map(item => `<span class="print-report-chip">القناة: ${escapeHtml(item.label)}</span>`).join("")}
-            ${selectedFeatures.map(item => `<span class="print-report-chip">${escapeHtml(item.label)}</span>`).join("")}
-          </div>
-        </section>
-
-        <section class="print-report-section">
-          <h3>${result.issues.length ? "النقاط التي تحتاج إلى تعديل" : "نتيجة المراجعة"}</h3>
-          ${result.issues.length ? `
-            <table class="print-report-table">
-              <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
-              <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
-              <tbody>
-                ${result.issues.map(issue => {
-                  const answer = answerMeta[issue.answer] || { label: issue.answer, className: "" };
-                  return `<tr>
-                    <td>${escapeHtml(issue.question)}</td>
-                    <td><span class="print-report-answer ${answer.className}">${answer.label}</span></td>
-                    <td>${escapeHtml(issue.fix)}</td>
-                  </tr>`;
-                }).join("")}
-              </tbody>
-            </table>
-          ` : `<div class="print-report-note">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>`}
-        </section>
-
-        <section class="print-report-section print-report-break">
-          <h3>سجل الأسئلة والإجابات</h3>
-          <table class="print-report-table">
-            <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
-            <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
-            <tbody>
-              ${state.activeRules.map(rule => {
-                const answer = answerMeta[state.answers[rule.id]] || { label: "لم تتم الإجابة", className: "" };
-                return `<tr>
-                  <td>${escapeHtml(rule.module)}</td>
-                  <td>${escapeHtml(rule.question)}</td>
-                  <td><span class="print-report-answer ${answer.className}">${answer.label}</span></td>
-                </tr>`;
-              }).join("")}
-            </tbody>
-          </table>
-        </section>
-
-        <section class="print-report-section">
-          <h3>النقاط المطمئنة</h3>
-          ${result.positives.length ? `
-            <table class="print-report-table">
-              <tbody>${result.positives.map(rule => `<tr><td>${escapeHtml(rule.question)}</td></tr>`).join("")}</tbody>
-            </table>
-          ` : `<div class="print-report-note">لا توجد نقاط مكتملة مسجلة ضمن الإجابات الحالية.</div>`}
-        </section>
-
-        <footer class="print-report-footer">
-          <div class="print-report-footer-tool">
-            <img src="assets/images/adschek-icon-256.png" alt="">
-            <div>
-              <strong>فاحص الامتثال الإعلاني</strong>
-              <span class="print-report-footer-link">almohammdin.github.io/ADsChek</span>
-            </div>
-          </div>
-          <div class="print-report-footer-guidance">
-            فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
-          </div>
-          <div class="print-report-footer-naif">
-            <img src="assets/images/naif-logo.svg" alt="نايف المحمدي">
-          </div>
-        </footer>
-      </article>
+      <div class="print-report-shell" style="--report-status:${result.level.color};--readiness:${result.score}%">
+        ${[firstPage, ...remainingIssuePages, ...questionPages].join("")}
+      </div>
     `;
   }
 
@@ -879,7 +967,7 @@
     }).format(new Date());
 
     $("imageExportStage").innerHTML = `
-      <div class="share-card ${topIssues.length <= 2 ? "share-card--few" : ""}" style="--status-color:${result.level.color};--status-bg:${result.level.bg}">
+      <div class="share-card ${topIssues.length <= 2 ? "share-card--few" : ""}" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--readiness:${result.score}%">
         <img class="share-pattern" src="assets/images/brand-pattern-export.svg" alt="">
 
         <div class="share-top">
@@ -894,11 +982,19 @@
         </div>
 
         <div class="share-status">
-          <div class="share-score">${result.score}%</div>
           <div>
             <small class="share-campaign"><b>اسم الحملة:</b><span>${escapeHtml(campaignName)}</span></small>
             <h2>${result.level.title}</h2>
             <p>${result.level.message}</p>
+          </div>
+          <div class="share-readiness">
+            <div class="share-readiness-head"><span>مؤشر الجاهزية والمخاطر</span><strong>${result.score}%</strong></div>
+            <div class="share-risk-track"><span></span></div>
+            <div class="share-risk-labels"><span>مخاطر أعلى</span><span>جاهزية أعلى</span></div>
+          </div>
+          <div class="share-decision ${result.decision.key}">
+            <strong>${result.decision.title}</strong>
+            <span>${result.decision.message}</span>
           </div>
         </div>
 
@@ -919,7 +1015,7 @@
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo.png" alt="نايف المحمدي" crossorigin="anonymous">
+              <img src="assets/images/naif-logo.svg" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
                 <span>almohammdin.github.io/ADsChek</span>
@@ -965,7 +1061,8 @@
 
     const requiredAssets = [
       [card.querySelector(".share-logo"), "شعار الأداة"],
-      [card.querySelector(".share-pattern"), "نمط الهوية"]
+      [card.querySelector(".share-pattern"), "نمط الهوية"],
+      [card.querySelector(".share-owner img"), "شعار نايف المحمدي"]
     ];
     const missingAsset = requiredAssets.find(([image]) => !image?.naturalWidth);
     if (missingAsset) {
