@@ -83,8 +83,11 @@
       url: "https://gmedia.gov.sa/executive-regulations"
     },
     copyright: {
-      title: "نظام حماية حقوق المؤلف",
-      url: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/67d159e6-ee98-4efc-a2ee-a9a700f17083/1"
+      title: "نظام حقوق المؤلف الجديد",
+      url: "https://www.uqn.gov.sa/details?p=28845",
+      linkLabel: "نظام حقوق المؤلف الجديد (قبل النفاذ)",
+      extraTitle: "مشروع اللائحة التنفيذية لنظام حقوق المؤلف",
+      extraUrl: "https://istitlaa.ncc.gov.sa/ar/Trade/SAIP/IRCopyright/Pages/default.aspx"
     },
     balady: {
       title: "اشتراطات اللوحات الدعائية والإعلانية",
@@ -681,7 +684,7 @@
                     <div>
                       <h4>${issue.question} <small>(${answerLabel})</small></h4>
                       <p>${issue.fix}</p>
-                      ${source ? `<a class="source-link" href="${source.url}" target="_blank" rel="noopener">اطلع على الأساس المستخدم في هذا السؤال</a>` : ""}
+                      ${source ? `<a class="source-link" href="${source.url}" target="_blank" rel="noopener">${source.linkLabel || "اطلع على الأساس المستخدم في هذا السؤال"}</a>${source.extraUrl ? `<br><a class="source-link" href="${source.extraUrl}" target="_blank" rel="noopener">${source.extraTitle}</a>` : ""}` : ""}
                     </div>
                   </li>
                 `;
