@@ -1833,17 +1833,34 @@ input:focus-visible {
     line-height: 1.45;
   }
 
+  .print-report-footer-guidance > span {
+    display: block;
+  }
+
+  .print-report-footer-guidance .print-report-page-number {
+    margin-top: .6mm;
+    color: #07345b;
+    font-size: 6.5pt;
+    font-weight: 700;
+  }
+
   .print-report-footer-naif {
     min-height: 11mm;
     display: flex;
     justify-content: flex-end;
   }
 
-  .print-report-footer-naif img {
+  .print-report-footer-naif::before {
+    content: "";
     width: 26mm;
     height: 11mm;
     display: block;
-    object-fit: contain;
+    flex: 0 0 auto;
+    background: url("../images/naif-logo-navy.png?v=2.0.18") center / contain no-repeat;
+  }
+
+  .print-report-footer-naif img {
+    display: none;
   }
 
   .print-report-footer-link {
@@ -1899,6 +1916,24 @@ input:focus-visible {
     color: #7b8791;
     font-size: 7pt;
     font-weight: 500;
+  }
+
+  .print-report-page--details .print-report-section--first {
+    margin-top: 5mm;
+  }
+
+  .print-report-page--details .print-report-section {
+    margin-top: 4mm;
+  }
+
+  .print-report-page--details .print-report-section h3 {
+    margin-bottom: 2mm;
+  }
+
+  .print-report-page--details .print-report-table th,
+  .print-report-page--details .print-report-table td {
+    padding: 2.1mm 2mm;
+    line-height: 1.5;
   }
 }
 
