@@ -726,34 +726,7 @@
 
     $("imageExportStage").innerHTML = `
       <div class="share-card" style="--status-color:${result.level.color};--status-bg:${result.level.bg}">
-        <svg class="share-pattern" viewBox="0 0 1080 1350" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <pattern id="sharePattern" width="180" height="110" patternUnits="userSpaceOnUse">
-              <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <g opacity=".075" stroke="#0B1A2B" stroke-width="3.4">
-                  <path d="M90 84V42M90 84L62 60M90 84l28-24M90 84V98"/>
-                  <path d="M62 60H38M118 60h24M90 42l-18-16M90 42l18-16"/>
-                </g>
-                <g opacity=".13" stroke="#C9A84C" stroke-width="2.6">
-                  <path d="M90 34V18M58 68H42M122 68h16"/>
-                </g>
-              </g>
-              <g opacity=".075" fill="#0B1A2B">
-                <circle cx="90" cy="18" r="6"/>
-                <circle cx="38" cy="60" r="5"/>
-                <circle cx="142" cy="60" r="5"/>
-                <circle cx="72" cy="26" r="4.5"/>
-                <circle cx="108" cy="26" r="4.5"/>
-              </g>
-              <g opacity=".13" fill="#C9A84C">
-                <rect x="85" y="48" width="10" height="10" transform="rotate(45 90 53)"/>
-                <rect x="49" y="63" width="10" height="10" transform="rotate(45 54 68)"/>
-                <rect x="121" y="63" width="10" height="10" transform="rotate(45 126 68)"/>
-              </g>
-            </pattern>
-          </defs>
-          <rect width="1080" height="1350" fill="url(#sharePattern)"/>
-        </svg>
+        <img class="share-pattern" src="assets/images/brand-pattern-export.svg" alt="">
 
         <div class="share-top">
           <div class="share-brand">
@@ -832,13 +805,79 @@
       setTimeout(done, 5000);
     })));
 
-    const logo = card.querySelector(".share-logo");
-    if (!logo?.naturalWidth) {
-      throw new Error("تعذر تحميل شعار الأداة داخل الصورة");
+    const requiredAssets = [
+      [card.querySelector(".share-logo"), "شعار الأداة"],
+      [card.querySelector(".share-pattern"), "نمط الهوية"]
+    ];
+    const missingAsset = requiredAssets.find(([image]) => !image?.naturalWidth);
+    if (missingAsset) {
+      throw new Error(`تعذر تحميل ${missingAsset[1]} داخل الصورة`);
     }
   }
 
-  async function shareResultImage() {
+  let preparedImage = null;
+
+  function releasePreparedImage() {
+    if (preparedImage?.url) URL.revokeObjectURL(preparedImage.url);
+    preparedImage = null;
+    $("resultImagePreview").removeAttribute("src");
+  }
+
+  function openImagePreview(blob, file) {
+    releasePreparedImage();
+    const url = URL.createObjectURL(blob);
+    preparedImage = { blob, file, url };
+    $("resultImagePreview").src = url;
+    $("imagePreview").hidden = false;
+    document.body.classList.add("preview-open");
+    document.querySelector(".image-preview-close")?.focus();
+  }
+
+  function closeImagePreview() {
+    $("imagePreview").hidden = true;
+    document.body.classList.remove("preview-open");
+    releasePreparedImage();
+    $("shareImage").focus();
+  }
+
+  function downloadPreparedImage() {
+    if (!preparedImage) {
+      showToast("جهّز الصورة أولا.");
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = preparedImage.url;
+    link.download = preparedImage.file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showToast("بدأ تنزيل الصورة.");
+  }
+
+  function sharePreparedImage() {
+    if (!preparedImage) {
+      showToast("جهّز الصورة أولا.");
+      return;
+    }
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [preparedImage.file] })) {
+      navigator.share({
+        files: [preparedImage.file],
+        title: "نتيجة فاحص الامتثال الإعلاني",
+        text: "نتيجة فاحص الامتثال الإعلاني قبل النشر"
+      }).then(() => {
+        showToast("تمت مشاركة الصورة.");
+      }).catch(error => {
+        if (error?.name !== "AbortError") {
+          console.error(error);
+          showToast("تعذرت المشاركة. يمكنك تنزيل الصورة.");
+        }
+      });
+      return;
+    }
+    downloadPreparedImage();
+  }
+
+  async function prepareResultImage() {
     const button = $("shareImage");
     const original = button.innerHTML;
     if (typeof window.html2canvas !== "function") {
@@ -871,25 +910,8 @@
       });
       const safeName = ($("campaignName").value.trim() || "ad-check").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
       const file = new File([blob], `ADsChek-${safeName}.png`, { type: "image/png" });
-
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: "نتيجة فاحص الامتثال الإعلاني",
-          text: "نتيجة فاحص الامتثال الإعلاني قبل النشر"
-        });
-        showToast("تم فتح خيارات المشاركة.");
-      } else {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file.name;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1500);
-        showToast("تم تنزيل صورة النتيجة.");
-      }
+      openImagePreview(blob, file);
+      showToast("تم تجهيز الصورة.");
     } catch (error) {
       if (error?.name !== "AbortError") {
         console.error(error);
@@ -911,6 +933,7 @@
   }
 
   function restart() {
+    if (!$("imagePreview").hidden) closeImagePreview();
     state.channels.clear();
     state.features.clear();
     state.answers = {};
@@ -948,6 +971,10 @@
 
     const action = event.target.closest("[data-action]")?.dataset.action;
     if (!action) return;
+    if (action === "close-image-preview") {
+      closeImagePreview();
+      return;
+    }
     if (action === "start") showView("profileView");
     if (action === "home") showView("homeView");
     if (action === "edit-profile") showView("profileView");
@@ -957,7 +984,12 @@
 
   $("buildAssessment").addEventListener("click", buildAssessment);
   $("showResult").addEventListener("click", renderResult);
-  $("shareImage").addEventListener("click", shareResultImage);
+  $("shareImage").addEventListener("click", prepareResultImage);
+  $("sharePreparedImage").addEventListener("click", sharePreparedImage);
+  $("downloadPreparedImage").addEventListener("click", downloadPreparedImage);
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !$("imagePreview").hidden) closeImagePreview();
+  });
 
   renderChoices(CHANNELS, "channelChoices", state.channels);
   renderChoices(FEATURES, "featureChoices", state.features);
