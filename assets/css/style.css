@@ -863,11 +863,23 @@ input:focus-visible {
   border-inline-start: 1px solid rgba(255, 255, 255, .12);
 }
 
-.footer-social .social-label {
+.footer-social .social-handle {
+  width: auto;
+  height: auto;
   margin-inline-end: 4px;
+  border: 0;
+  border-radius: 0;
   color: rgba(255, 255, 255, .56);
   font-size: 10px;
   font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.footer-social .social-handle:hover {
+  border: 0;
+  color: var(--gold-light);
+  transform: none;
 }
 
 .footer-social a {
