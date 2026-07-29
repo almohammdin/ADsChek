@@ -725,12 +725,16 @@
     }).format(new Date());
 
     $("imageExportStage").innerHTML = `
-      <div class="share-card" style="--status-color:${result.level.color};--status-bg:${result.level.bg}">
+      <div class="share-card ${topIssues.length <= 2 ? "share-card--few" : ""}" style="--status-color:${result.level.color};--status-bg:${result.level.bg}">
         <img class="share-pattern" src="assets/images/brand-pattern-export.svg" alt="">
 
         <div class="share-top">
           <div class="share-brand">
-            <img class="share-logo" src="assets/images/adschek-logo-preview.jpg" alt="فاحص الامتثال الإعلاني" loading="eager" decoding="sync">
+            <img class="share-logo" src="assets/images/adschek-icon.png" alt="" loading="eager" decoding="sync">
+            <div class="share-brand-copy">
+              <strong>فاحص الامتثال الإعلاني</strong>
+              <span>Ad Compliance Checker</span>
+            </div>
           </div>
           <div class="share-date">${date}</div>
         </div>
