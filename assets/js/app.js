@@ -714,7 +714,7 @@
     $("resultRoot").innerHTML = `
       <section class="status-card ${result.level.key}" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--readiness:${result.score}%">
         <div class="status-copy">
-          <div class="result-campaign">${campaignName ? escapeHtml(campaignName) : "إعلان دون اسم محدد"}</div>
+          <div class="result-campaign">اسم الحملة :${campaignName ? ` ${escapeHtml(campaignName)}` : ""}</div>
           <h3>${result.level.title}</h3>
           <p>${result.level.message}</p>
           <div class="readiness-head">
@@ -823,15 +823,16 @@
           </div>
         </div>
         <div class="print-report-footer-guidance">
-          فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
+          <span>فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.</span>
+          <strong class="print-report-page-number">__REPORT_PAGINATION__</strong>
         </div>
         <div class="print-report-footer-naif">
-          <img src="assets/images/naif-logo-navy.png" alt="نايف المحمدي">
+          <img src="assets/images/naif-logo-navy.png?v=2.0.18" alt="نايف المحمدي">
         </div>
       </footer>
     `;
-    const reportPage = content => `
-      <section class="print-report print-report-page">
+    const reportPage = (content, modifier = "") => `
+      <section class="print-report print-report-page ${modifier}">
         <img class="print-report-pattern" src="assets/images/brand-pattern-export.svg" alt="">
         ${reportHeader()}
         <div class="print-report-page-content">${content}</div>
@@ -856,31 +857,58 @@
     }).join("");
 
     const firstIssues = result.issues.slice(0, 3);
-    const remainingIssuePages = chunks(result.issues.slice(3), 5).map((items, index) => reportPage(`
-      <section class="print-report-section print-report-section--first">
-        <h3>تكملة النقاط التي تحتاج إلى تعديل ${index + 1}</h3>
-        <table class="print-report-table">
-          <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
-          <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
-          <tbody>${issueRows(items)}</tbody>
-        </table>
-      </section>
-    `));
-    const questionPages = chunks(state.activeRules, 8).map((items, index, all) => reportPage(`
-      <section class="print-report-section print-report-section--first">
-        <h3>${index ? "تكملة سجل الأسئلة والإجابات" : "سجل الأسئلة والإجابات"} <small>${index + 1} من ${all.length}</small></h3>
-        <table class="print-report-table">
-          <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
-          <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
-          <tbody>${questionRows(items)}</tbody>
-        </table>
-      </section>
-    `));
+    const remainingIssues = result.issues.slice(3);
+    let detailPages;
+
+    if (remainingIssues.length <= 4 && state.activeRules.length <= 12) {
+      detailPages = [reportPage(`
+        ${remainingIssues.length ? `
+          <section class="print-report-section print-report-section--first">
+            <h3>تكملة النقاط التي تحتاج إلى تعديل</h3>
+            <table class="print-report-table">
+              <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
+              <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
+              <tbody>${issueRows(remainingIssues)}</tbody>
+            </table>
+          </section>
+        ` : ""}
+        <section class="print-report-section ${remainingIssues.length ? "" : "print-report-section--first"}">
+          <h3>سجل الأسئلة والإجابات</h3>
+          <table class="print-report-table">
+            <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
+            <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
+            <tbody>${questionRows(state.activeRules)}</tbody>
+          </table>
+        </section>
+      `, "print-report-page--details")];
+    } else {
+      const remainingIssuePages = chunks(remainingIssues, 5).map((items, index) => reportPage(`
+        <section class="print-report-section print-report-section--first">
+          <h3>تكملة النقاط التي تحتاج إلى تعديل ${index + 1}</h3>
+          <table class="print-report-table">
+            <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
+            <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
+            <tbody>${issueRows(items)}</tbody>
+          </table>
+        </section>
+      `, "print-report-page--details"));
+      const questionPages = chunks(state.activeRules, 10).map((items, index, all) => reportPage(`
+        <section class="print-report-section print-report-section--first">
+          <h3>${index ? "تكملة سجل الأسئلة والإجابات" : "سجل الأسئلة والإجابات"} <small>${index + 1} من ${all.length}</small></h3>
+          <table class="print-report-table">
+            <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
+            <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
+            <tbody>${questionRows(items)}</tbody>
+          </table>
+        </section>
+      `, "print-report-page--details"));
+      detailPages = [...remainingIssuePages, ...questionPages];
+    }
 
     const firstPage = reportPage(`
       <div class="print-report-title">
         <small>تقرير استرشادي قبل النشر</small>
-        <h1>${campaignName ? escapeHtml(campaignName) : "إعلان دون اسم مدخل"}</h1>
+        <h1>اسم الحملة :${campaignName ? ` ${escapeHtml(campaignName)}` : ""}</h1>
       </div>
       <section class="print-report-summary">
         <div>
@@ -922,9 +950,15 @@
       </section>
     `);
 
+    const reportPages = [firstPage, ...detailPages];
+    const numberedReportPages = reportPages.map((page, index) => page.replace(
+      "__REPORT_PAGINATION__",
+      reportPages.length > 1 ? `صفحة ${index + 1} من ${reportPages.length}` : ""
+    ));
+
     $("printReportStage").innerHTML = `
       <div class="print-report-shell" style="--report-status:${result.level.color};--readiness:${result.score}%">
-        ${[firstPage, ...remainingIssuePages, ...questionPages].join("")}
+        ${numberedReportPages.join("")}
       </div>
     `;
   }
@@ -1015,7 +1049,7 @@
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="assets/images/naif-logo-navy.png" alt="نايف المحمدي">
+              <img src="assets/images/naif-logo-navy.png?v=2.0.18" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
                 <span>almohammdin.github.io/ADsChek</span>
