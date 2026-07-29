@@ -555,9 +555,17 @@
             <article class="question-card" data-rule="${rule.id}">
               <div class="question-top">
                 <span class="question-number">${number}</span>
-                <p class="question-text">${rule.question}</p>
+                <div class="question-content">
+                  <div class="question-line">
+                    <p class="question-text">${rule.question}</p>
+                    <button class="answer-tip-trigger" type="button" aria-label="مساعدة للإجابة عن السؤال ${number}" aria-expanded="false">؟</button>
+                  </div>
+                  <div class="answer-tip" role="tooltip">
+                    <strong>كيف تجيب؟</strong>
+                    <span>اعتمد النسخة النهائية من الإعلان. مثال أو نقطة تحقق: ${rule.help}</span>
+                  </div>
+                </div>
               </div>
-              <p class="question-help">${rule.help}</p>
               <div class="answer-grid" role="group" aria-label="إجابة السؤال ${number}">
                 ${[
                   ["yes", "نعم"],
@@ -710,14 +718,43 @@
 
   function createShareCard() {
     const result = state.result || calculateResult();
-    const campaignName = $("campaignName").value.trim() || "فحص إعلان";
+    const campaignName = $("campaignName").value.trim();
     const topIssues = result.issues.slice(0, 5);
-    const date = new Intl.DateTimeFormat("ar-SA", {
+    const date = new Intl.DateTimeFormat("ar-SA-u-nu-latn", {
       year: "numeric", month: "long", day: "numeric"
     }).format(new Date());
 
     $("imageExportStage").innerHTML = `
       <div class="share-card" style="--status-color:${result.level.color};--status-bg:${result.level.bg}">
+        <svg class="share-pattern" viewBox="0 0 1080 1350" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <pattern id="sharePattern" width="180" height="110" patternUnits="userSpaceOnUse">
+              <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <g opacity=".075" stroke="#0B1A2B" stroke-width="3.4">
+                  <path d="M90 84V42M90 84L62 60M90 84l28-24M90 84V98"/>
+                  <path d="M62 60H38M118 60h24M90 42l-18-16M90 42l18-16"/>
+                </g>
+                <g opacity=".13" stroke="#C9A84C" stroke-width="2.6">
+                  <path d="M90 34V18M58 68H42M122 68h16"/>
+                </g>
+              </g>
+              <g opacity=".075" fill="#0B1A2B">
+                <circle cx="90" cy="18" r="6"/>
+                <circle cx="38" cy="60" r="5"/>
+                <circle cx="142" cy="60" r="5"/>
+                <circle cx="72" cy="26" r="4.5"/>
+                <circle cx="108" cy="26" r="4.5"/>
+              </g>
+              <g opacity=".13" fill="#C9A84C">
+                <rect x="85" y="48" width="10" height="10" transform="rotate(45 90 53)"/>
+                <rect x="49" y="63" width="10" height="10" transform="rotate(45 54 68)"/>
+                <rect x="121" y="63" width="10" height="10" transform="rotate(45 126 68)"/>
+              </g>
+            </pattern>
+          </defs>
+          <rect width="1080" height="1350" fill="url(#sharePattern)"/>
+        </svg>
+
         <div class="share-top">
           <div class="share-brand">
             <img class="share-logo" src="assets/images/adschek-logo.png" alt="فاحص الامتثال الإعلاني">
@@ -728,7 +765,7 @@
         <div class="share-status">
           <div class="share-score">${result.score}%</div>
           <div>
-            <small>${escapeHtml(campaignName)}</small>
+            <small class="share-campaign"><b>اسم الحملة:</b><span>${escapeHtml(campaignName)}</span></small>
             <h2>${result.level.title}</h2>
             <p>${result.level.message}</p>
           </div>
@@ -749,34 +786,56 @@
         <div class="share-good">تمت مراجعة ${state.activeRules.length} نقطة، منها ${result.positives.length} إجابة مطمئنة.</div>
 
         <div class="share-footer">
-          <div class="share-owner">
-            <img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo.png" alt="نايف المحمدي">
-            <div>
-              <strong>فاحص الامتثال الإعلاني</strong>
-              <span>almohammdin.github.io/ADsChek</span>
+          <div class="share-footer-main">
+            <div class="share-owner">
+              <img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo.png" alt="نايف المحمدي" crossorigin="anonymous">
+              <div>
+                <strong>فاحص الامتثال الإعلاني</strong>
+                <span>almohammdin.github.io/ADsChek</span>
+              </div>
+            </div>
+            <div class="share-accounts">
+              <strong>Almohammdin</strong>
+              <div class="share-social" aria-label="حسابات نايف المحمدي">
+                <span aria-label="إكس (X)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 2H22l-8.3 9.5L23.5 22h-7.7l-6-7.9L2.9 22H-.9l8.9-10.2L-1.4 2h7.9l5.4 7.2L18.2 2Zm-1.3 18h2.1L5.4 3.9H3.2L16.9 20Z"/></svg>
+                </span>
+                <span aria-label="لينكدإن (LinkedIn)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 7.9H1.7V22h3.6V7.9ZM3.5 2A2.1 2.1 0 1 0 3.5 6.2 2.1 2.1 0 0 0 3.5 2ZM22 13.9c0-4.2-2.2-6.2-5.2-6.2-2.4 0-3.5 1.3-4.1 2.2v-2H9.1V22h3.6v-7c0-1.8.3-3.6 2.6-3.6 2.2 0 2.3 2.1 2.3 3.7V22H22v-8.1Z"/></svg>
+                </span>
+                <span aria-label="سناب شات (Snapchat)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.1c-3.1 0-5.2 2.5-5.2 5.7 0 .8.1 1.7.2 2.4-.4.2-1 .3-1.5.1-.8-.3-1.3 1-.5 1.5.4.3 1.1.5 1.5.7-.5 1.2-1.5 2.3-3.1 3-.6.3-.5 1.2.1 1.4 1 .4 2 .5 2.8.7.3.1.5.7.8 1.2.2.3.6.4 1 .3.8-.2 1.6-.5 2.9-.5s2.1.3 2.9.5c.4.1.8 0 1-.3.3-.5.5-1.1.8-1.2.8-.2 1.8-.3 2.8-.7.6-.2.7-1.1.1-1.4-1.6-.7-2.6-1.8-3.1-3 .4-.2 1.1-.4 1.5-.7.8-.5.3-1.8-.5-1.5-.5.2-1.1.1-1.5-.1.1-.7.2-1.6.2-2.4 0-3.2-2.1-5.7-5.2-5.7Z"/></svg>
+                </span>
+                <span aria-label="لنك تري (Linktree)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.736 5.852 17.644 2l1.92 1.92-3.852 3.736h5.644v2.736h-5.66l3.868 3.752-1.92 1.92-5.276-5.28-5.276 5.28-1.92-1.92 3.868-3.752H3.38V7.656h5.644L5.172 3.92 7.092 2l3.932 3.852V0h2.712v5.852ZM11.024 24v-8.604h2.712V24h-2.712Z"/></svg>
+                </span>
+              </div>
             </div>
           </div>
-          <div class="share-accounts">
-            <strong>Almohammdin</strong>
-            <div class="share-social" aria-label="حسابات نايف المحمدي">
-              <span aria-label="إكس (X)">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 2H22l-8.3 9.5L23.5 22h-7.7l-6-7.9L2.9 22H-.9l8.9-10.2L-1.4 2h7.9l5.4 7.2L18.2 2Zm-1.3 18h2.1L5.4 3.9H3.2L16.9 20Z"/></svg>
-              </span>
-              <span aria-label="لينكدإن (LinkedIn)">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 7.9H1.7V22h3.6V7.9ZM3.5 2A2.1 2.1 0 1 0 3.5 6.2 2.1 2.1 0 0 0 3.5 2ZM22 13.9c0-4.2-2.2-6.2-5.2-6.2-2.4 0-3.5 1.3-4.1 2.2v-2H9.1V22h3.6v-7c0-1.8.3-3.6 2.6-3.6 2.2 0 2.3 2.1 2.3 3.7V22H22v-8.1Z"/></svg>
-              </span>
-              <span aria-label="سناب شات (Snapchat)">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.1c-3.1 0-5.2 2.5-5.2 5.7 0 .8.1 1.7.2 2.4-.4.2-1 .3-1.5.1-.8-.3-1.3 1-.5 1.5.4.3 1.1.5 1.5.7-.5 1.2-1.5 2.3-3.1 3-.6.3-.5 1.2.1 1.4 1 .4 2 .5 2.8.7.3.1.5.7.8 1.2.2.3.6.4 1 .3.8-.2 1.6-.5 2.9-.5s2.1.3 2.9.5c.4.1.8 0 1-.3.3-.5.5-1.1.8-1.2.8-.2 1.8-.3 2.8-.7.6-.2.7-1.1.1-1.4-1.6-.7-2.6-1.8-3.1-3 .4-.2 1.1-.4 1.5-.7.8-.5.3-1.8-.5-1.5-.5.2-1.1.1-1.5-.1.1-.7.2-1.6.2-2.4 0-3.2-2.1-5.7-5.2-5.7Z"/></svg>
-              </span>
-              <span aria-label="لنك تري (Linktree)">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.736 5.852 17.644 2l1.92 1.92-3.852 3.736h5.644v2.736h-5.66l3.868 3.752-1.92 1.92-5.276-5.28-5.276 5.28-1.92-1.92 3.868-3.752H3.38V7.656h5.644L5.172 3.92 7.092 2l3.932 3.852V0h2.712v5.852ZM11.024 24v-8.604h2.712V24h-2.712Z"/></svg>
-              </span>
-            </div>
-          </div>
+          <p class="share-guidance">فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.</p>
         </div>
       </div>
     `;
     return $("imageExportStage").firstElementChild;
+  }
+
+  async function waitForExportAssets(card) {
+    const images = [...card.querySelectorAll("img")];
+    await Promise.all(images.map(image => new Promise(resolve => {
+      if (image.complete) {
+        resolve();
+        return;
+      }
+      const done = () => resolve();
+      image.addEventListener("load", done, { once: true });
+      image.addEventListener("error", done, { once: true });
+      setTimeout(done, 5000);
+    })));
+
+    const logo = card.querySelector(".share-logo");
+    if (!logo?.naturalWidth) {
+      throw new Error("تعذر تحميل شعار الأداة داخل الصورة");
+    }
   }
 
   async function shareResultImage() {
@@ -793,12 +852,14 @@
     try {
       await document.fonts.ready;
       const card = createShareCard();
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await waitForExportAssets(card);
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const canvas = await window.html2canvas(card, {
         backgroundColor: "#f7f5ef",
         scale: 2,
         useCORS: true,
         logging: false,
+        imageTimeout: 10000,
         width: 1080,
         height: 1350,
         windowWidth: 1080,
@@ -863,6 +924,19 @@
   }
 
   document.addEventListener("click", event => {
+    const tipTrigger = event.target.closest(".answer-tip-trigger");
+    if (tipTrigger) {
+      const card = tipTrigger.closest(".question-card");
+      const isOpen = card.classList.toggle("tip-open");
+      tipTrigger.setAttribute("aria-expanded", String(isOpen));
+      document.querySelectorAll(".question-card.tip-open").forEach(openCard => {
+        if (openCard === card) return;
+        openCard.classList.remove("tip-open");
+        openCard.querySelector(".answer-tip-trigger")?.setAttribute("aria-expanded", "false");
+      });
+      return;
+    }
+
     const answer = event.target.closest(".answer-btn");
     if (answer) {
       const card = answer.closest(".question-card");
