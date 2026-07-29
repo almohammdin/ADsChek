@@ -823,7 +823,7 @@
           <strong class="print-report-page-number">__REPORT_PAGINATION__</strong>
         </div>
         <div class="print-report-footer-naif">
-          <img src="assets/images/naif-logo-navy.png?v=2.0.19" alt="نايف المحمدي">
+          <img src="assets/images/naif-logo-navy.png?v=2.0.20" alt="نايف المحمدي">
         </div>
       </footer>
     `;
@@ -1069,7 +1069,7 @@
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="assets/images/naif-logo-navy.png?v=2.0.19" alt="نايف المحمدي">
+              <img src="assets/images/naif-logo-navy.png?v=2.0.20" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
                 <span>almohammdin.github.io/ADsChek</span>
