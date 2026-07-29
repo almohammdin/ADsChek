@@ -743,7 +743,7 @@
       <article class="print-report" style="--report-status:${result.level.color}">
         <header class="print-report-header">
           <div class="print-report-brand">
-            <img src="assets/images/adschek-icon.png" alt="">
+            <img src="assets/images/adschek-icon-256.png" alt="">
             <div>
               <strong>فاحص الامتثال الإعلاني</strong>
               <span>Ad Compliance Checker</span>
@@ -843,7 +843,7 @@
           </div>
           <div class="print-report-footer-link">
             <strong>almohammdin.github.io/ADsChek</strong>
-            الإصدار 2.0.12
+            الإصدار 2.0.13
           </div>
         </footer>
       </article>
@@ -883,7 +883,7 @@
 
         <div class="share-top">
           <div class="share-brand">
-            <img class="share-logo" src="assets/images/adschek-icon.png" alt="" loading="eager" decoding="sync">
+            <img class="share-logo" src="assets/images/adschek-icon-256.png" alt="" loading="eager" decoding="sync">
             <div class="share-brand-copy">
               <strong>فاحص الامتثال الإعلاني</strong>
               <span>Ad Compliance Checker</span>
