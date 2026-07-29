@@ -716,6 +716,159 @@
     showView("resultView");
   }
 
+  function renderPrintReport() {
+    const result = state.result || calculateResult();
+    const campaignName = $("campaignName").value.trim();
+    const date = new Intl.DateTimeFormat("ar-SA-u-nu-latn", {
+      year: "numeric", month: "long", day: "numeric"
+    }).format(new Date());
+    const answerMeta = {
+      yes: { label: "نعم", className: "yes" },
+      partial: { label: "مطبق جزئيا", className: "partial" },
+      no: { label: "لا", className: "no" },
+      unknown: { label: "غير متأكد", className: "unknown" }
+    };
+    const selectedChannels = CHANNELS.filter(item => state.channels.has(item.id));
+    const selectedFeatures = FEATURES.filter(item => state.features.has(item.id));
+    const sourceKeys = [...new Set(state.activeRules.map(rule => rule.source).filter(Boolean))];
+    const sourceEntries = sourceKeys.flatMap(key => {
+      const source = SOURCES[key];
+      if (!source) return [];
+      const entries = [{ title: source.linkLabel || source.title, url: source.url }];
+      if (source.extraUrl) entries.push({ title: source.extraTitle, url: source.extraUrl });
+      return entries;
+    });
+
+    $("printReportStage").innerHTML = `
+      <article class="print-report" style="--report-status:${result.level.color}">
+        <header class="print-report-header">
+          <div class="print-report-brand">
+            <img src="assets/images/adschek-icon.png" alt="">
+            <div>
+              <strong>فاحص الامتثال الإعلاني</strong>
+              <span>Ad Compliance Checker</span>
+            </div>
+          </div>
+          <div class="print-report-meta">
+            <strong>تقرير فحص الإعلان</strong>
+            <span>${date}</span>
+          </div>
+        </header>
+
+        <div class="print-report-title">
+          <small>تقرير استرشادي قبل النشر</small>
+          <h1>${campaignName ? escapeHtml(campaignName) : "إعلان دون اسم مدخل"}</h1>
+        </div>
+
+        <section class="print-report-summary">
+          <div class="print-report-score">${result.score}%</div>
+          <div>
+            <h2>${result.level.title}</h2>
+            <p>${result.level.message}</p>
+          </div>
+        </section>
+
+        <div class="print-report-facts">
+          <div class="print-report-fact"><span>النقاط التي تمت مراجعتها</span><strong>${state.activeRules.length}</strong></div>
+          <div class="print-report-fact"><span>نقاط تحتاج إلى معالجة</span><strong>${result.issues.length}</strong></div>
+          <div class="print-report-fact"><span>إجابات مطمئنة</span><strong>${result.positives.length}</strong></div>
+        </div>
+
+        <section class="print-report-section">
+          <h3>نطاق الفحص</h3>
+          <div class="print-report-chips">
+            ${selectedChannels.map(item => `<span class="print-report-chip">القناة: ${escapeHtml(item.label)}</span>`).join("")}
+            ${selectedFeatures.map(item => `<span class="print-report-chip">${escapeHtml(item.label)}</span>`).join("")}
+          </div>
+        </section>
+
+        <section class="print-report-section">
+          <h3>${result.issues.length ? "النقاط التي تحتاج إلى تعديل" : "نتيجة المراجعة"}</h3>
+          ${result.issues.length ? `
+            <table class="print-report-table">
+              <colgroup><col style="width:34%"><col style="width:18%"><col style="width:48%"></colgroup>
+              <thead><tr><th>نقطة الفحص</th><th>الإجابة</th><th>الإجراء المقترح</th></tr></thead>
+              <tbody>
+                ${result.issues.map(issue => {
+                  const answer = answerMeta[issue.answer] || { label: issue.answer, className: "" };
+                  return `<tr>
+                    <td>${escapeHtml(issue.question)}</td>
+                    <td><span class="print-report-answer ${answer.className}">${answer.label}</span></td>
+                    <td>${escapeHtml(issue.fix)}</td>
+                  </tr>`;
+                }).join("")}
+              </tbody>
+            </table>
+          ` : `<div class="print-report-note">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>`}
+        </section>
+
+        <section class="print-report-section print-report-break">
+          <h3>سجل الأسئلة والإجابات</h3>
+          <table class="print-report-table">
+            <colgroup><col style="width:17%"><col style="width:55%"><col style="width:28%"></colgroup>
+            <thead><tr><th>المحور</th><th>نقطة الفحص</th><th>الإجابة</th></tr></thead>
+            <tbody>
+              ${state.activeRules.map(rule => {
+                const answer = answerMeta[state.answers[rule.id]] || { label: "لم تتم الإجابة", className: "" };
+                return `<tr>
+                  <td>${escapeHtml(rule.module)}</td>
+                  <td>${escapeHtml(rule.question)}</td>
+                  <td><span class="print-report-answer ${answer.className}">${answer.label}</span></td>
+                </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </section>
+
+        <section class="print-report-section">
+          <h3>النقاط المطمئنة</h3>
+          ${result.positives.length ? `
+            <table class="print-report-table">
+              <tbody>${result.positives.map(rule => `<tr><td>${escapeHtml(rule.question)}</td></tr>`).join("")}</tbody>
+            </table>
+          ` : `<div class="print-report-note">لا توجد نقاط مكتملة مسجلة ضمن الإجابات الحالية.</div>`}
+        </section>
+
+        <section class="print-report-section">
+          <h3>المراجع المستخدمة في الفحص</h3>
+          <ol class="print-report-references">
+            ${sourceEntries.map(source => `<li><strong>${escapeHtml(source.title)}</strong><span>${escapeHtml(source.url)}</span></li>`).join("")}
+          </ol>
+        </section>
+
+        <footer class="print-report-footer">
+          <div>
+            <strong>فحص استرشادي أولي</strong>
+            تخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.
+          </div>
+          <div class="print-report-footer-link">
+            <strong>almohammdin.github.io/ADsChek</strong>
+            الإصدار 2.0.12
+          </div>
+        </footer>
+      </article>
+    `;
+  }
+
+  async function printResultReport() {
+    const button = $("printReport");
+    const original = button.innerHTML;
+    button.disabled = true;
+    button.textContent = "جارٍ تجهيز التقرير...";
+    try {
+      renderPrintReport();
+      await document.fonts.ready;
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      window.print();
+    } catch (error) {
+      console.error(error);
+      showToast("تعذر تجهيز التقرير. حاول مرة أخرى.");
+    } finally {
+      button.disabled = false;
+      button.innerHTML = original;
+    }
+  }
+
   function createShareCard() {
     const result = state.result || calculateResult();
     const campaignName = $("campaignName").value.trim();
@@ -944,6 +1097,7 @@
     state.activeRules = [];
     state.result = null;
     $("campaignName").value = "";
+    $("printReportStage").innerHTML = "";
     renderChoices(CHANNELS, "channelChoices", state.channels);
     renderChoices(FEATURES, "featureChoices", state.features);
     updateProfileState();
@@ -989,6 +1143,7 @@
   $("buildAssessment").addEventListener("click", buildAssessment);
   $("showResult").addEventListener("click", renderResult);
   $("shareImage").addEventListener("click", prepareResultImage);
+  $("printReport").addEventListener("click", printResultReport);
   $("sharePreparedImage").addEventListener("click", sharePreparedImage);
   $("downloadPreparedImage").addEventListener("click", downloadPreparedImage);
   document.addEventListener("keydown", event => {
