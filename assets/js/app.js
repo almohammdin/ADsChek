@@ -1,6 +1,8 @@
 (() => {
   "use strict";
 
+  const APP_VERSION = "2.1.0";
+
   const ICONS = {
     social: '<svg viewBox="0 0 24 24"><path d="M7 8.5a5 5 0 0 1 10 0v7a5 5 0 0 1-10 0v-7Z"/><path d="M10 12h4M12 10v4"/></svg>',
     message: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4V5Z"/><path d="M8 9h8M8 12h5"/></svg>',
@@ -85,7 +87,7 @@
     copyright: {
       title: "نظام حقوق المؤلف الجديد",
       url: "https://www.uqn.gov.sa/details?p=28845",
-      linkLabel: "نظام حقوق المؤلف الجديد — يُعمل به بدءًا من 12 أغسطس 2026",
+      linkLabel: "نظام حقوق المؤلف الجديد — يبدأ العمل به في 12 أغسطس 2026",
       extraTitle: "مشروع اللائحة التنفيذية لنظام حقوق المؤلف",
       extraUrl: "https://istitlaa.ncc.gov.sa/ar/Trade/SAIP/IRCopyright/Pages/default.aspx"
     },
@@ -94,7 +96,7 @@
       url: "https://balady.gov.sa/ar/%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D8%B7%D8%A7%D8%AA-%D8%A7%D9%84%D9%84%D9%88%D8%AD%D8%A7%D8%AA-%D8%A7%D9%84%D8%AF%D8%B9%D8%A7%D8%A6%D9%8A%D8%A9-%D9%88%D8%A7%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%86%D9%8A%D8%A9-0"
     },
     vat: {
-      title: "ضوابط إعلان السعر شاملا الضريبة",
+      title: "ضوابط إعلان السعر شامل الضريبة",
       url: "https://mc.gov.sa/ar/mediacenter/News/Pages/04-08-20-01.aspx"
     },
     sfdaMenu: {
@@ -122,7 +124,7 @@
     },
     {
       id: "GEN-02", module: "وضوح الإعلان ومصداقيته",
-      question: "هل شروط العرض وحدوده ومدته مكتوبة بوضوح ولا تخفي معلومة مؤثرة؟",
+      question: "هل تظهر شروط العرض وحدوده ومدته بلغة واضحة دون إخفاء معلومة مؤثرة؟",
       help: "مثل الفروع المشاركة، الحد الأدنى للطلب، أوقات الاستفادة، والاستثناءات.",
       severity: "high", weight: 3,
       fix: "أضف الشروط المؤثرة بجوار العرض وبخط مقروء قبل النشر.",
@@ -130,7 +132,7 @@
     },
     {
       id: "GEN-03", module: "وضوح الإعلان ومصداقيته",
-      question: "هل يظهر اسم المنشأة أو هويتها بوضوح ويعرف الجمهور من يقف خلف الإعلان؟",
+      question: "هل يظهر اسم المنشأة أو هويتها بحيث يعرف الجمهور الجهة التي تقف خلف الإعلان؟",
       help: "تزداد أهمية ذلك في الإعلانات الرقمية التي تقود إلى شراء أو طلب.",
       severity: "high", weight: 3,
       fix: "أظهر الاسم التجاري ووسيلة تواصل صحيحة داخل الإعلان أو الصفحة المرتبطة به.",
@@ -139,15 +141,15 @@
     {
       id: "GEN-04", module: "وضوح الإعلان ومصداقيته",
       question: "هل صورة المنتج وحجمه ومكوناته وطريقة تقديمه قريبة من الواقع؟",
-      help: "لا تستخدم معالجة أو تصويرا يعطي انطباعا جوهريا غير صحيح عن المنتج.",
+      help: "تجنب المعالجة أو التصوير الذي يقدم صورة غير صحيحة عن المنتج.",
       severity: "high", weight: 3,
-      fix: "استخدم صورة تمثل المنتج المباع فعليا، ووضح أي إضافات أو أحجام غير مشمولة.",
+      fix: "استخدم صورة تمثل المنتج المباع، وبيّن أي إضافات أو أحجام غير مشمولة.",
       source: "fraud"
     },
     {
       id: "GEN-05", module: "المحتوى والحقوق",
       question: "هل يخلو الإعلان من الإساءة أو التمييز أو المحتوى المخالف لضوابط المحتوى الإعلامي؟",
-      help: "راجع النص والصورة والصوت والسياق كاملا، لا العبارة منفردة فقط.",
+      help: "راجع النص والصورة والصوت والسياق الكامل، وليس العبارة منفردة فقط.",
       severity: "critical", weight: 4,
       fix: "أوقف المادة وعدل أي نص أو مشهد أو إيحاء قد يخالف ضوابط المحتوى الإعلامي.",
       source: "media"
@@ -155,9 +157,9 @@
     {
       id: "GEN-06", module: "المحتوى والحقوق",
       question: "هل تملك حق استخدام التصميم والخط والصورة والموسيقى وكل عنصر إبداعي؟",
-      help: "وجود المادة في الإنترنت لا يعني أنها متاحة للاستخدام التجاري.",
+      help: "وجود المادة على الإنترنت لا يمنح حق استخدامها لأغراض تجارية.",
       severity: "high", weight: 3,
-      fix: "استخدم مادة أصلية أو مرخصة تجاريا، وتأكد من أن الترخيص يغطي طريقة الاستخدام.",
+      fix: "استخدم مادة أصلية أو مرخصة للاستخدام التجاري، وتأكد من أن الترخيص يغطي طريقة الاستخدام.",
       source: "copyright"
     },
     {
@@ -166,7 +168,7 @@
       question: "هل السعر الظاهر شامل ضريبة القيمة المضافة ويطابق ما سيدفعه العميل؟",
       help: "لا تجعل العميل يكتشف زيادة إلزامية بعد الوصول إلى السلة أو الفرع.",
       severity: "critical", weight: 4,
-      fix: "اعرض السعر النهائي شاملا الضريبة، وطابقه مع نقطة البيع والفاتورة.",
+      fix: "اعرض السعر النهائي شامل الضريبة، وطابقه مع نقطة البيع والفاتورة.",
       source: "vat"
     },
     {
@@ -175,7 +177,7 @@
       question: "هل أوضحت أي رسوم أو إضافات إلزامية مرتبطة بالحصول على السعر؟",
       help: "مثل رسوم التوصيل أو حد أدنى للطلب أو إضافات لا يكتمل المنتج دونها.",
       severity: "high", weight: 3,
-      fix: "اذكر التكلفة الإلزامية أو الشرط المؤثر بوضوح بجوار السعر.",
+      fix: "ضع التكلفة الإلزامية أو الشرط المؤثر بجوار السعر في موضع ظاهر.",
       source: "ecommerce"
     },
     {
@@ -191,7 +193,7 @@
       id: "DISC-01", module: "التخفيضات",
       when: { all: ["discount"] },
       question: "هل صدر ترخيص التخفيض قبل نشر الإعلان؟",
-      help: "طلب الترخيص أو نية الحصول عليه لاحقا لا تكفي.",
+      help: "طلب الترخيص أو نية الحصول عليه في وقت لاحق لا تكفي.",
       severity: "critical", weight: 5,
       fix: "أوقف النشر حتى يصدر ترخيص التخفيض وتطابق تفاصيل الإعلان مع بياناته.",
       source: "discounts"
@@ -200,9 +202,9 @@
       id: "DISC-02", module: "التخفيضات",
       when: { all: ["discount"] },
       question: "هل يظهر ترخيص التخفيض ويمكن للعميل التحقق منه؟",
-      help: "يجب ألا يكون رقم الترخيص مخفيا أو غير مقروء داخل المادة.",
+      help: "يجب أن يظهر رقم الترخيص بخط مقروء داخل المادة.",
       severity: "high", weight: 3,
-      fix: "أضف رقم الترخيص أو رمزه بالطريقة المطلوبة وفي موضع واضح.",
+      fix: "أضف رقم الترخيص أو رمزه بالطريقة المطلوبة وفي موضع يسهل رؤيته.",
       source: "discounts"
     },
     {
@@ -229,7 +231,7 @@
       question: "هل يستطيع الشخص الاشتراك دون اشتراط الشراء؟",
       help: "اشتراط شراء منتج أو وضع القسيمة داخله من النقاط المحظورة في المسابقات التجارية.",
       severity: "critical", weight: 5,
-      fix: "أزل شرط الشراء وضع طريقة مشاركة مستقلة وواضحة.",
+      fix: "أزل شرط الشراء، وأضف طريقة مشاركة مستقلة ومفهومة.",
       source: "competitions"
     },
     {
@@ -265,7 +267,7 @@
       question: "هل يوضح المحتوى من بدايته أنه إعلان أو تعاون مدفوع؟",
       help: "يجب ألا يبدو المحتوى تجربة شخصية مستقلة إذا كان مقابله منفعة أو مبلغ.",
       severity: "high", weight: 3,
-      fix: "أضف إفصاحا ظاهرا ومباشرا يفهمه المتلقي من بداية المحتوى.",
+      fix: "ضع الإفصاح المباشر والظاهر في بداية المحتوى.",
       source: "media"
     },
     {
@@ -274,14 +276,14 @@
       question: "هل راجعت المنشأة النسخة النهائية وتأكدت من صحة كلام المؤثر عن المنتج؟",
       help: "المبالغة الصادرة من المؤثر قد تحول الرسالة إلى إعلان مضلل.",
       severity: "high", weight: 3,
-      fix: "اعتمد نصا نهائيا واضحا وامنع أي ادعاء أو سعر أو وعد غير معتمد.",
+      fix: "اعتمد النص النهائي بعد مراجعته، واحذف أي ادعاء أو سعر أو وعد غير معتمد.",
       source: "ecommerce"
     },
     {
       id: "DM-01", module: "بيانات العملاء والتسويق المباشر",
       when: { any: ["customer_data", "messages", "email", "calls"] },
       question: "هل حصلت على موافقة مسبقة واضحة لاستخدام قناة التواصل في التسويق؟",
-      help: "وجود رقم العميل في فاتورة أو طلب سابق لا يعني تلقائيا موافقته على الإعلانات.",
+      help: "وجود رقم العميل في فاتورة أو طلب سابق لا يمثل موافقة على الإعلانات.",
       severity: "critical", weight: 5,
       fix: "لا ترسل الحملة إلى هذه القائمة حتى تكون لديك موافقة تسويقية صحيحة ومحددة.",
       source: "pdpl"
@@ -298,17 +300,17 @@
     {
       id: "DM-03", module: "بيانات العملاء والتسويق المباشر",
       when: { any: ["messages", "email", "calls"] },
-      question: "هل يعرف المستلم بوضوح اسم الجهة المرسلة والغرض التسويقي؟",
+      question: "هل يعرف المستلم اسم الجهة المرسلة والغرض التسويقي من بداية الرسالة؟",
       help: "تجنب الأرقام أو العناوين التي لا تكشف هوية المرسل.",
       severity: "high", weight: 3,
-      fix: "عرّف بالمنشأة من بداية الرسالة أو المكالمة ووضح أنها تواصل تسويقي.",
+      fix: "عرّف بالمنشأة من بداية الرسالة أو المكالمة، وبيّن أن التواصل لأغراض تسويقية.",
       source: "pdplReg"
     },
     {
       id: "DM-04", module: "بيانات العملاء والتسويق المباشر",
       when: { any: ["messages", "email", "calls"] },
       question: "هل توجد طريقة مجانية وواضحة لإيقاف الرسائل أو المكالمات؟",
-      help: "يجب أن يكون الاعتراض أو إلغاء الاشتراك سهلا وفعالا.",
+      help: "وفّر طريقة سهلة وفعالة للاعتراض أو إلغاء الاشتراك.",
       severity: "critical", weight: 4,
       fix: "أضف وسيلة إلغاء مباشرة، وطبّق الطلب دون تعقيد أو تأخير.",
       source: "pdplReg"
@@ -316,7 +318,7 @@
     {
       id: "DM-05", module: "بيانات العملاء والتسويق المباشر",
       when: { any: ["messages", "email", "calls"] },
-      question: "هل استبعدت من الحملة كل من طلب سابقا إيقاف التواصل التسويقي؟",
+      question: "هل استبعدت من الحملة كل من سبق أن طلب إيقاف التواصل التسويقي؟",
       help: "إعادة إدخال المعترض في حملة جديدة يعيد المشكلة حتى لو تغير العرض.",
       severity: "critical", weight: 4,
       fix: "حدّث قائمة الإيقاف قبل الإرسال واربطها بجميع أدوات التسويق.",
@@ -328,7 +330,7 @@
       question: "هل تبدأ المكالمة بتعريف المتصل والمنشأة وسبب الاتصال؟",
       help: "ينطبق ذلك على المكالمات البشرية والآلية بحسب طبيعة الخدمة.",
       severity: "high", weight: 3,
-      fix: "اكتب افتتاحية إلزامية للمكالمة تبين الهوية والغرض بوضوح.",
+      fix: "اكتب افتتاحية إلزامية للمكالمة تبين الهوية والغرض من الاتصال.",
       source: "cst"
     },
     {
@@ -337,16 +339,16 @@
       question: "هل توضح سياسة الخصوصية استخدام أدوات التتبع وإعادة الاستهداف؟",
       help: "يجب أن يعرف الزائر نوع البيانات والغرض والجهات التي تستقبلها.",
       severity: "high", weight: 3,
-      fix: "حدث إشعار الخصوصية ليشرح التتبع والغرض منه بطريقة واضحة.",
+      fix: "حدّث إشعار الخصوصية لشرح التتبع والغرض منه بلغة سهلة.",
       source: "pdpl"
     },
     {
       id: "RET-02", module: "إعادة الاستهداف والتتبع",
       when: { all: ["retargeting"] },
       question: "هل يستطيع الزائر التحكم في التتبع غير الضروري قبل تفعيله؟",
-      help: "لا تجعل القبول مفترضا أو تخفي خيار الرفض.",
+      help: "اجعل القبول باختيار صريح، وأظهر خيار الرفض.",
       severity: "critical", weight: 4,
-      fix: "أضف خيارا واضحا للموافقة أو الرفض، ولا تفعل التتبع التسويقي قبل الاختيار.",
+      fix: "وفّر خيار الموافقة أو الرفض، وفعّل التتبع التسويقي بعد الاختيار.",
       source: "pdpl"
     },
     {
@@ -388,7 +390,7 @@
     {
       id: "FOOD-02", module: "الادعاءات الغذائية والصحية",
       when: { all: ["food_claim"] },
-      question: "هل يخلو الإعلان من وعد علاجي أو إيحاء بأن الغذاء يعالج أو يمنع مرضا؟",
+      question: "هل يخلو الإعلان من وعد علاجي أو إيحاء بأن الغذاء يعالج الأمراض أو يمنعها؟",
       help: "العبارات العلاجية تختلف عن الوصف الغذائي المعتاد وقد تغير تصنيف المنتج.",
       severity: "critical", weight: 5,
       fix: "احذف الوعد العلاجي واستبدله بوصف غذائي مسموح ومثبت.",
@@ -400,7 +402,7 @@
       question: "هل تعرض القائمة السعرات الحرارية والإفصاحات المطلوبة بجوار الأصناف؟",
       help: "يشمل ذلك القوائم المطبوعة والرقمية وشاشات الطلب عندما ينطبق المتطلب.",
       severity: "critical", weight: 4,
-      fix: "حدّث القوائم في جميع القنوات وأظهر الإفصاحات بجوار الصنف بوضوح.",
+      fix: "حدّث القوائم في جميع القنوات، وضع الإفصاحات المطلوبة بجوار الصنف.",
       source: "sfdaMenu"
     },
     {
@@ -416,7 +418,7 @@
       id: "PEO-01", module: "الأشخاص والخصوصية",
       when: { all: ["people"] },
       question: "هل وافق الأشخاص الظاهرون على استخدام صورهم أو أصواتهم في هذا الإعلان؟",
-      help: "الموافقة على التصوير لا تعني دائما الموافقة على الاستخدام الإعلاني.",
+      help: "الموافقة على التصوير لا تشمل بالضرورة الاستخدام الإعلاني.",
       severity: "critical", weight: 4,
       fix: "احصل على موافقة واضحة للاستخدام الإعلاني أو استبدل المادة.",
       source: "pdpl"
@@ -424,10 +426,10 @@
     {
       id: "IP-01", module: "المحتوى والحقوق",
       when: { all: ["third_party"] },
-      question: "هل يجيز الترخيص استخدام الصورة أو الموسيقى أو الشعار تجاريا وفي المنصة المحددة؟",
+      question: "هل يجيز الترخيص استخدام الصورة أو الموسيقى أو الشعار لأغراض تجارية وفي المنصة المحددة؟",
       help: "بعض التراخيص تسمح بالاستخدام العام لكنها تقيد الإعلانات أو العلامات التجارية.",
       severity: "critical", weight: 4,
-      fix: "راجع نطاق الترخيص واحصل على الإذن المناسب أو استخدم بديلا تملكه المنشأة.",
+      fix: "راجع نطاق الترخيص واحصل على الإذن المناسب أو استخدم مادة بديلة تملكها المنشأة.",
       source: "copyright"
     },
     {
@@ -451,7 +453,7 @@
     {
       id: "AI-01", module: "المحتوى المولد بالذكاء الاصطناعي",
       when: { all: ["ai"] },
-      question: "هل راجعت المحتوى المولد وتأكدت أنه لا يصنع منتجا أو شخصا أو شهادة غير حقيقية؟",
+      question: "هل راجعت المحتوى المولد وتأكدت من أنه لا يصنع صورة غير حقيقية لمنتج أو شخص أو شهادة؟",
       help: "الذكاء الاصطناعي أداة إنتاج ولا يعفي المنشأة من مسؤولية صحة الإعلان.",
       severity: "critical", weight: 4,
       fix: "احذف أو عدل كل عنصر يوهم بواقعة أو منتج أو تجربة عميل غير حقيقية.",
@@ -461,7 +463,7 @@
       id: "AI-02", module: "المحتوى المولد بالذكاء الاصطناعي",
       when: { all: ["ai"] },
       question: "هل تأكدت من عدم تقليد علامة أو شخصية حقيقية أو مادة محمية دون إذن؟",
-      help: "راجع المدخلات والمخرجات النهائية، خصوصا الوجوه والشعارات والأساليب القريبة من أعمال محددة.",
+      help: "راجع المدخلات والمخرجات النهائية، وبالأخص الوجوه والشعارات والأساليب القريبة من أعمال محددة.",
       severity: "high", weight: 3,
       fix: "استبدل العنصر المقلد، وتجنب استخدام هوية أو وجه أو عمل محمي دون حق.",
       source: "copyright"
@@ -483,6 +485,23 @@
     return String(value).replace(/[&<>"']/g, char => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     })[char]);
+  }
+
+  function formatExportDateParts(date = new Date()) {
+    const options = { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Riyadh" };
+    const weekday = new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-latn", {
+      weekday: "long",
+      timeZone: "Asia/Riyadh"
+    }).format(date);
+    const hijriParts = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-latn", options).formatToParts(date);
+    const gregorianParts = new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-latn", options).formatToParts(date);
+    const value = (parts, type) => parts.find(part => part.type === type)?.value || "";
+
+    return {
+      weekday,
+      hijri: `${value(hijriParts, "day")} ${value(hijriParts, "month")} ${value(hijriParts, "year")} هـ`,
+      gregorian: `${value(gregorianParts, "day")} ${value(gregorianParts, "month")} ${value(gregorianParts, "year")} م`
+    };
   }
 
   function selectedKeys() {
@@ -569,7 +588,7 @@
               <div class="answer-grid" role="group" aria-label="إجابة السؤال ${number}">
                 ${[
                   ["yes", "نعم"],
-                  ["partial", "جزئيا"],
+                  ["partial", "إلى حد ما"],
                   ["no", "لا"],
                   ["unknown", "غير متأكد"]
                 ].map(([value, label]) => `
@@ -627,39 +646,39 @@
       level = {
         key: "safe",
         title: "جاهزية مرتفعة",
-        message: "معظم نقاط الفحص مطبقة، مع بقاء ما يظهر أدناه من ملاحظات.",
+        message: "معظم نقاط الفحص مستوفاة، مع مراجعة الملاحظات المتبقية قبل النشر.",
         color: "#167a55",
         bg: "#edf8f3"
       };
     } else if (score >= 75) {
       level = {
         key: "limited",
-        title: "جاهز مع ملاحظات محدودة",
-        message: "الجاهزية جيدة، وتحتاج النقاط الموضحة إلى استكمال أو تحقق.",
+        title: "جاهزية جيدة",
+        message: "الأساس جيد، وتحتاج النقاط أدناه إلى استكمال أو تحقق قبل المراجعة النهائية.",
         color: "#668b2b",
         bg: "#f2f7e9"
       };
     } else if (score >= 55) {
       level = {
         key: "caution",
-        title: "يحتاج تعديلات مهمة",
-        message: "توجد فجوات مؤثرة، ويُنصح بإكمالها ثم إعادة الفحص.",
+        title: "جاهزية متوسطة",
+        message: "توجد نقاط مؤثرة تحتاج إلى تعديل قبل اعتماد الإعلان.",
         color: "#b98512",
         bg: "#fff8e5"
       };
     } else if (score >= 35) {
       level = {
         key: "high",
-        title: "مخاطر مرتفعة",
-        message: "الإعلان يحتاج معالجة جوهرية قبل الانتقال إلى المراجعة النهائية.",
+        title: "جاهزية منخفضة",
+        message: "توجد فجوات جوهرية، والأولوية الآن تعديل الإعلان ثم إعادة الفحص.",
         color: "#c8661a",
         bg: "#fff2e8"
       };
     } else {
       level = {
         key: "severe",
-        title: "مخاطر شديدة",
-        message: "الفجوات الحالية واسعة، ويجب إعادة ضبط الإعلان قبل النشر.",
+        title: "جاهزية ضعيفة",
+        message: "الإعلان يحتاج إلى مراجعة شاملة قبل التفكير في النشر.",
         color: "#b33434",
         bg: "#fff0ef"
       };
@@ -670,25 +689,25 @@
       decision = {
         key: "stop",
         title: blockers.length === 1 ? "مانع واحد قبل النشر" : `${blockers.length} موانع قبل النشر`,
-        message: "لا ينشر الإعلان حتى تُعالج النقاط المانعة الموضحة أدناه."
+        message: "عالج النقاط المانعة أدناه قبل النشر."
       };
     } else if (incompleteCritical.length || uncertainCritical.length) {
       decision = {
         key: "verify",
-        title: "استكمال أو تحقق قبل النشر",
-        message: `${incompleteCritical.length ? `${incompleteCritical.length} نقطة مؤثرة مطبقة جزئيا` : ""}${incompleteCritical.length && uncertainCritical.length ? "، و" : ""}${uncertainCritical.length ? `${uncertainCritical.length} نقطة مؤثرة غير محسومة` : ""}.`
+        title: "أكمل وتحقق قبل النشر",
+        message: "أكمل النقاط ذات التطبيق الجزئي، وتحقق من النقاط التي اخترت لها «غير متأكد»."
       };
     } else if (score < 75) {
       decision = {
         key: "review",
         title: "أكمل التعديلات قبل النشر",
-        message: "لا يظهر مانع مؤكد، لكن مستوى الجاهزية الحالي لا يكفي للانتقال إلى النشر."
+        message: "راجع الأولويات أدناه، ثم أعد الفحص قبل اعتماد الإعلان."
       };
     } else {
       decision = {
         key: "clear",
-        title: "لا يظهر مانع قبل النشر",
-        message: "يمكن الانتقال إلى المراجعة النهائية داخل المنشأة قبل إطلاق الحملة."
+        title: "انتقل إلى المراجعة النهائية",
+        message: "راجع النسخة النهائية داخل المنشأة، ثم اعتمد قرار النشر."
       };
     }
 
@@ -709,69 +728,95 @@
     const result = calculateResult();
     const campaignName = $("campaignName").value.trim();
     const unknownCount = state.activeRules.filter(rule => state.answers[rule.id] === "unknown").length;
-    const partialCount = state.activeRules.filter(rule => state.answers[rule.id] === "partial").length;
+    const changeCount = state.activeRules.filter(rule => ["no", "partial"].includes(state.answers[rule.id])).length;
+    const priorityMeta = {
+      critical: { label: "أولوية قصوى", className: "critical" },
+      high: { label: "أولوية عالية", className: "high" },
+      medium: { label: "أولوية متوسطة", className: "medium" },
+      low: { label: "أولوية لاحقة", className: "low" }
+    };
+    const issueAnswerMeta = {
+      no: "غير مطبق",
+      partial: "تطبيق جزئي",
+      unknown: "تحتاج تحقق"
+    };
 
     $("resultRoot").innerHTML = `
-      <section class="status-card ${result.level.key}" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--readiness:${result.score}%">
-        <div class="status-copy">
-          <div class="result-campaign">اسم الحملة :${campaignName ? ` ${escapeHtml(campaignName)}` : ""}</div>
-          <h3>${result.level.title}</h3>
-          <p>${result.level.message}</p>
-          <div class="readiness-head">
-            <span>مؤشر الجاهزية والمخاطر</span>
-            <strong>${result.score}%</strong>
+      <section class="status-card ${result.level.key}" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--score-position:${100 - result.score}%">
+        <div class="status-topline">
+          <span class="status-badge">نتيجة الفحص</span>
+          ${campaignName ? `<div class="result-campaign"><span>الحملة</span><strong>${escapeHtml(campaignName)}</strong></div>` : ""}
+        </div>
+        <div class="status-layout">
+          <div class="status-copy">
+            <span class="status-label">مستوى الجاهزية</span>
+            <h3>${result.level.title}</h3>
+            <p>${result.level.message}</p>
           </div>
-          <div class="risk-meter" role="img" aria-label="جاهزية الإعلان ${result.score} بالمئة">
-            <div class="risk-meter-track"><span class="risk-meter-pointer"></span></div>
-            <div class="risk-meter-labels"><span>مخاطر أعلى</span><span>جاهزية أعلى</span></div>
-          </div>
-          <div class="publish-decision ${result.decision.key}">
-            <span class="publish-decision-icon" aria-hidden="true">${result.decision.key === "clear" ? "✓" : "!"}</span>
-            <div><strong>${result.decision.title}</strong><p>${result.decision.message}</p></div>
-          </div>
-          <div class="result-summary">
-            <span>${state.activeRules.length} نقطة تمت مراجعتها</span>
-            <span>${result.positives.length} إجابة مطمئنة</span>
-            ${result.blockers.length ? `<span>${result.blockers.length} ${result.blockers.length === 1 ? "مانع مؤكد" : "موانع مؤكدة"}</span>` : ""}
-            ${unknownCount ? `<span>${unknownCount} غير متأكد منها</span>` : ""}
-            ${partialCount ? `<span>${partialCount} مطبقة جزئيا</span>` : ""}
+          <div class="score-box" aria-label="درجة الجاهزية ${result.score} من 100">
+            <strong>${result.score}</strong>
+            <span>من 100</span>
+            <small>الأعلى أفضل</small>
           </div>
         </div>
+        <div class="risk-meter" role="img" aria-label="درجة جاهزية الإعلان ${result.score} من 100، والأعلى أفضل">
+          <div class="risk-meter-head"><span>درجة الجاهزية</span><strong>${result.score} من 100 • الأعلى أفضل</strong></div>
+          <div class="risk-meter-track"><span class="risk-meter-pointer"></span></div>
+          <div class="risk-meter-labels"><span>جاهزية منخفضة</span><span>جاهزية متوسطة</span><span>جاهزية مرتفعة</span></div>
+        </div>
+        <div class="publish-decision ${result.decision.key}">
+          <span class="publish-decision-icon" aria-hidden="true">${result.decision.key === "clear" ? "✓" : "!"}</span>
+          <div><strong>${result.decision.title}</strong><p>${result.decision.message}</p></div>
+        </div>
+        <aside class="result-reading">
+          <strong>كيف تقرأ النتيجة؟</strong>
+          <p>ابدأ بالنقاط المانعة، ثم أكمل التعديلات بحسب ترتيب الأولوية. الدرجة تعكس إجاباتك ضمن نطاق الفحص المختار.</p>
+        </aside>
       </section>
+
+      <div class="result-metrics" aria-label="ملخص نتيجة الفحص">
+        <div class="result-metric"><strong>${state.activeRules.length}</strong><span>نقطة تمت مراجعتها</span></div>
+        <div class="result-metric positive"><strong>${result.positives.length}</strong><span>نقطة مستوفاة</span></div>
+        <div class="result-metric warning"><strong>${changeCount}</strong><span>تحتاج إلى تعديل</span></div>
+        <div class="result-metric verify"><strong>${unknownCount}</strong><span>تحتاج إلى تحقق</span></div>
+      </div>
 
       <div class="result-grid">
         <section class="result-card">
           <div class="result-card-head">
-            <h3>${result.issues.length ? "عدّل هذه النقاط قبل النشر" : "لا توجد تعديلات ظاهرة"}</h3>
-            <p>${result.issues.length ? "مرتبة بحسب أهميتها وتأثيرها على جاهزية الإعلان." : "بحسب إجاباتك ونطاق الفحص الذي اخترته."}</p>
+            <h3>${result.issues.length ? "أولويات ما قبل النشر" : "جاهز للمراجعة النهائية"}</h3>
+            <p>${result.issues.length ? "ابدأ بالأولوية القصوى، ثم أكمل بقية التعديلات ونقاط التحقق." : "بحسب إجاباتك ونطاق الفحص الذي اخترته."}</p>
           </div>
           ${result.issues.length ? `
             <ol class="issue-list">
               ${result.issues.map(issue => {
                 const source = SOURCES[issue.source];
-                const answerLabel = { no: "غير مطبق", partial: "مطبق جزئيا", unknown: "غير متأكد" }[issue.answer];
+                const priority = priorityMeta[issue.severity] || priorityMeta.low;
                 return `
-                  <li class="issue-item ${issue.severity === "critical" ? "critical" : ""}">
+                  <li class="issue-item priority-${priority.className}">
                     <span class="issue-dot"></span>
                     <div>
-                      <h4>${issue.question} <small>(${answerLabel})</small></h4>
-                      <p>${issue.fix}</p>
-                      ${source ? `<a class="source-link" href="${source.url}" target="_blank" rel="noopener">${source.linkLabel || "اطلع على الأساس المستخدم في هذا السؤال"}</a>${source.extraUrl ? `<br><a class="source-link" href="${source.extraUrl}" target="_blank" rel="noopener">${source.extraTitle}</a>` : ""}` : ""}
+                      <div class="issue-meta"><span class="issue-priority">${priority.label}</span><span class="issue-answer">${issueAnswerMeta[issue.answer]}</span></div>
+                      <h4>${issue.question}</h4>
+                      <p class="issue-action"><strong>الإجراء المقترح</strong><span>${issue.fix}</span></p>
+                      ${source ? `<div class="source-links"><a class="source-link" href="${source.url}" target="_blank" rel="noopener">${source.linkLabel || `المصدر: ${source.title}`}</a>${source.extraUrl ? `<a class="source-link" href="${source.extraUrl}" target="_blank" rel="noopener">${source.extraTitle}</a>` : ""}</div>` : ""}
                     </div>
                   </li>
                 `;
               }).join("")}
             </ol>
-          ` : `<div class="empty-result">يمكن الانتقال إلى المراجعة النهائية داخل المنشأة قبل إطلاق الحملة.</div>`}
+          ` : `<div class="empty-result">راجع النسخة النهائية داخل المنشأة، ثم اعتمد قرار النشر.</div>`}
         </section>
 
         <section class="result-card">
           <div class="result-card-head">
-            <h3>نقاط مطمئنة</h3>
-            <p>أهم ما أشرت إلى تطبيقه في الإعلان.</p>
+            <h3>إشارات مطمئنة</h3>
+            <p>نقاط أشرت إلى اكتمالها في الإعلان.</p>
           </div>
           <ul class="positive-list">
-            ${result.positives.slice(0, 8).map(rule => `<li>${rule.question}</li>`).join("")}
+            ${result.positives.length
+              ? result.positives.slice(0, 8).map(rule => `<li>${rule.question}</li>`).join("")
+              : `<li class="positive-empty">تظهر هنا النقاط المستوفاة بعد تعديل الإجابات وإعادة الفحص.</li>`}
           </ul>
         </section>
       </div>
@@ -783,15 +828,17 @@
   function renderPrintReport() {
     const result = state.result || calculateResult();
     const campaignName = $("campaignName").value.trim();
-    const date = new Intl.DateTimeFormat("ar-SA-u-nu-latn", {
-      year: "numeric", month: "long", day: "numeric"
-    }).format(new Date());
+    const date = `${new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-latn", {
+      year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Riyadh"
+    }).format(new Date())} م`;
     const answerMeta = {
       yes: { label: "نعم", className: "yes" },
-      partial: { label: "مطبق جزئيا", className: "partial" },
+      partial: { label: "إلى حد ما", className: "partial" },
       no: { label: "لا", className: "no" },
       unknown: { label: "غير متأكد", className: "unknown" }
     };
+    const unknownCount = state.activeRules.filter(rule => state.answers[rule.id] === "unknown").length;
+    const changeCount = state.activeRules.filter(rule => ["no", "partial"].includes(state.answers[rule.id])).length;
     const selectedChannels = CHANNELS.filter(item => state.channels.has(item.id));
     const selectedFeatures = FEATURES.filter(item => state.features.has(item.id));
     const reportHeader = () => `
@@ -816,6 +863,7 @@
           <div>
             <strong>فاحص الامتثال الإعلاني</strong>
             <span class="print-report-footer-link">almohammdin.github.io/ADsChek</span>
+            <span>الإصدار ${APP_VERSION}</span>
           </div>
         </div>
         <div class="print-report-footer-guidance">
@@ -823,7 +871,7 @@
           <strong class="print-report-page-number">__REPORT_PAGINATION__</strong>
         </div>
         <div class="print-report-footer-naif">
-          <img src="assets/images/naif-logo-navy.png?v=2.0.20" alt="نايف المحمدي">
+          <img src="assets/images/naif-logo-navy.png?v=2.1.0" alt="نايف المحمدي">
         </div>
       </footer>
     `;
@@ -897,7 +945,8 @@
     const firstPage = reportPage(`
       <div class="print-report-title">
         <small>تقرير استرشادي قبل النشر</small>
-        <h1>اسم الحملة :${campaignName ? ` ${escapeHtml(campaignName)}` : ""}</h1>
+        <h1>${campaignName ? escapeHtml(campaignName) : "نتيجة فحص الإعلان"}</h1>
+        ${campaignName ? `<p>نتيجة فحص الإعلان</p>` : ""}
       </div>
       <section class="print-report-summary">
         <div>
@@ -905,9 +954,9 @@
           <p>${result.level.message}</p>
         </div>
         <div class="print-report-readiness">
-          <div><span>مؤشر الجاهزية والمخاطر</span><strong>${result.score}%</strong></div>
+          <div><span>درجة الجاهزية • الأعلى أفضل</span><strong>${result.score} من 100</strong></div>
           <div class="print-risk-track"><span></span></div>
-          <div class="print-risk-labels"><span>مخاطر أعلى</span><span>جاهزية أعلى</span></div>
+          <div class="print-risk-labels"><span>جاهزية منخفضة</span><span>جاهزية متوسطة</span><span>جاهزية مرتفعة</span></div>
         </div>
         <div class="print-report-decision ${result.decision.key}">
           <strong>${result.decision.title}</strong>
@@ -916,9 +965,9 @@
       </section>
       <div class="print-report-facts">
         <div class="print-report-fact"><span>النقاط التي تمت مراجعتها</span><strong>${state.activeRules.length}</strong></div>
-        <div class="print-report-fact"><span>نقاط تحتاج إلى معالجة</span><strong>${result.issues.length}</strong></div>
-        <div class="print-report-fact"><span>إجابات مطمئنة</span><strong>${result.positives.length}</strong></div>
-        <div class="print-report-fact"><span>موانع مؤكدة قبل النشر</span><strong>${result.blockers.length}</strong></div>
+        <div class="print-report-fact"><span>تحتاج إلى تعديل</span><strong>${changeCount}</strong></div>
+        <div class="print-report-fact"><span>تحتاج إلى تحقق</span><strong>${unknownCount}</strong></div>
+        <div class="print-report-fact"><span>نقاط مستوفاة</span><strong>${result.positives.length}</strong></div>
       </div>
       <section class="print-report-section">
         <h3>نطاق الفحص</h3>
@@ -929,7 +978,7 @@
       </section>
       ${firstIssues.length ? issueTable(firstIssues) : `
         <section class="print-report-section">
-          <div class="print-report-note">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>
+          <div class="print-report-note">تشير الإجابات إلى استيفاء نقاط الفحص ضمن النطاق المختار.</div>
         </section>
       `}
     `);
@@ -977,7 +1026,7 @@
     ));
 
     $("printReportStage").innerHTML = `
-      <div class="print-report-shell" style="--report-status:${result.level.color};--readiness:${result.score}%">
+      <div class="print-report-shell" style="--report-status:${result.level.color};--score-position:${100 - result.score}%">
         ${numberedReportPages.join("")}
       </div>
     `;
@@ -1015,13 +1064,25 @@
   function createShareCard() {
     const result = state.result || calculateResult();
     const campaignName = $("campaignName").value.trim();
-    const topIssues = result.issues.slice(0, 5);
-    const date = new Intl.DateTimeFormat("ar-SA-u-nu-latn", {
-      year: "numeric", month: "long", day: "numeric"
-    }).format(new Date());
+    const topIssues = result.issues.slice(0, 3);
+    const topPositives = result.positives.slice(0, 2);
+    const unknownCount = state.activeRules.filter(rule => state.answers[rule.id] === "unknown").length;
+    const changeCount = state.activeRules.filter(rule => ["no", "partial"].includes(state.answers[rule.id])).length;
+    const priorityLabels = {
+      critical: "أولوية قصوى",
+      high: "أولوية عالية",
+      medium: "أولوية متوسطة",
+      low: "أولوية لاحقة"
+    };
+    const answerLabels = {
+      no: "غير مطبق",
+      partial: "تطبيق جزئي",
+      unknown: "تحتاج تحقق"
+    };
+    const exportDate = formatExportDateParts();
 
     $("imageExportStage").innerHTML = `
-      <div class="share-card ${topIssues.length <= 2 ? "share-card--few" : ""}" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--readiness:${result.score}%">
+      <div class="share-card" style="--status-color:${result.level.color};--status-bg:${result.level.bg};--score-position:${100 - result.score}%">
         <img class="share-pattern" src="assets/images/brand-pattern-export.svg" alt="">
 
         <div class="share-top">
@@ -1032,19 +1093,36 @@
               <span>Ad Compliance Checker</span>
             </div>
           </div>
-          <div class="share-date">${date}</div>
+          <div class="share-date" aria-label="${exportDate.weekday}، ${exportDate.hijri}، ${exportDate.gregorian}">
+            <span>${exportDate.weekday}</span><b>|</b><span>${exportDate.hijri}</span><b>|</b><span>${exportDate.gregorian}</span>
+          </div>
+        </div>
+
+        <div class="share-context">
+          <div>
+            <small>${campaignName ? "اسم الحملة" : "نتيجة الفحص"}</small>
+            <strong>${campaignName ? escapeHtml(campaignName) : "مراجعة الإعلان قبل النشر"}</strong>
+          </div>
+          <span>تقرير تنفيذي</span>
         </div>
 
         <div class="share-status">
-          <div>
-            <small class="share-campaign"><b>اسم الحملة:</b><span>${escapeHtml(campaignName)}</span></small>
-            <h2>${result.level.title}</h2>
-            <p>${result.level.message}</p>
+          <div class="share-status-main">
+            <div>
+              <small>مستوى الجاهزية</small>
+              <h2>${result.level.title}</h2>
+              <p>${result.level.message}</p>
+            </div>
+            <div class="share-score" aria-label="درجة الجاهزية ${result.score} من 100">
+              <strong>${result.score}</strong>
+              <span>من 100</span>
+              <small>الأعلى أفضل</small>
+            </div>
           </div>
           <div class="share-readiness">
-            <div class="share-readiness-head"><span>مؤشر الجاهزية والمخاطر</span><strong>${result.score}%</strong></div>
+            <div class="share-readiness-head"><span>درجة الجاهزية</span><strong>${result.score} من 100 • الأعلى أفضل</strong></div>
             <div class="share-risk-track"><span></span></div>
-            <div class="share-risk-labels"><span>مخاطر أعلى</span><span>جاهزية أعلى</span></div>
+            <div class="share-risk-labels"><span>جاهزية منخفضة</span><span>جاهزية متوسطة</span><span>جاهزية مرتفعة</span></div>
           </div>
           <div class="share-decision ${result.decision.key}">
             <strong>${result.decision.title}</strong>
@@ -1052,27 +1130,55 @@
           </div>
         </div>
 
-        <h3 class="share-section-title">${topIssues.length ? "أهم ما يحتاج إلى تعديل" : "نتيجة الفحص"}</h3>
-        ${topIssues.length ? `
-          <div class="share-issues">
-            ${topIssues.map((issue, index) => `
-              <div class="share-issue">
-                <span>${index + 1}</span>
-                <div><strong>${issue.question}</strong><p>${issue.fix}</p></div>
-              </div>
-            `).join("")}
-          </div>
-        ` : `<div class="share-good">لم تظهر مشكلة واضحة ضمن نطاق الأسئلة التي أجبت عنها.</div>`}
+        <div class="share-metrics">
+          <div><strong>${state.activeRules.length}</strong><span>تمت مراجعتها</span></div>
+          <div class="positive"><strong>${result.positives.length}</strong><span>مستوفاة</span></div>
+          <div class="warning"><strong>${changeCount}</strong><span>تحتاج تعديل</span></div>
+          <div class="verify"><strong>${unknownCount}</strong><span>تحتاج تحقق</span></div>
+        </div>
 
-        <div class="share-good">تمت مراجعة ${state.activeRules.length} نقطة، منها ${result.positives.length} إجابة مطمئنة.</div>
+        <div class="share-content">
+          <section class="share-priorities">
+            <h3 class="share-section-title">${topIssues.length ? "أهم أولويات ما قبل النشر" : "جاهز للمراجعة النهائية"}</h3>
+            ${topIssues.length ? `
+              <div class="share-issues">
+                ${topIssues.map((issue, index) => `
+                  <div class="share-issue">
+                    <span>${index + 1}</span>
+                    <div>
+                      <small>${priorityLabels[issue.severity] || priorityLabels.low} • ${answerLabels[issue.answer]}</small>
+                      <strong>${issue.question}</strong>
+                      <p>${issue.fix}</p>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+              ${result.issues.length > topIssues.length ? `<p class="share-more">تظهر بقية الأولويات في التقرير الكامل.</p>` : ""}
+            ` : `<div class="share-good">تشير الإجابات إلى استيفاء نقاط الفحص ضمن النطاق المختار.</div>`}
+          </section>
+
+          <section class="share-positive-panel">
+            <h3>إشارات مطمئنة</h3>
+            <ul>
+              ${topPositives.length
+                ? topPositives.map(rule => `<li>${rule.question}</li>`).join("")
+                : `<li>تظهر الإشارات المطمئنة بعد استكمال نقاط الفحص.</li>`}
+            </ul>
+          </section>
+        </div>
+
+        <div class="share-reading">
+          <strong>طريقة القراءة</strong>
+          <span>كلما ارتفعت الدرجة زادت الجاهزية. تبدأ الأولوية بالنقاط المانعة ثم بقية التعديلات.</span>
+        </div>
 
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="assets/images/naif-logo-navy.png?v=2.0.20" alt="نايف المحمدي">
+              <img src="assets/images/naif-logo-navy.png?v=2.1.0" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
-                <span>almohammdin.github.io/ADsChek</span>
+                <span>الإصدار ${APP_VERSION}</span>
               </div>
             </div>
             <div class="share-accounts">
@@ -1085,7 +1191,7 @@
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 7.9H1.7V22h3.6V7.9ZM3.5 2A2.1 2.1 0 1 0 3.5 6.2 2.1 2.1 0 0 0 3.5 2ZM22 13.9c0-4.2-2.2-6.2-5.2-6.2-2.4 0-3.5 1.3-4.1 2.2v-2H9.1V22h3.6v-7c0-1.8.3-3.6 2.6-3.6 2.2 0 2.3 2.1 2.3 3.7V22H22v-8.1Z"/></svg>
                 </span>
                 <span aria-label="سناب شات (Snapchat)">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.1c-3.1 0-5.2 2.5-5.2 5.7 0 .8.1 1.7.2 2.4-.4.2-1 .3-1.5.1-.8-.3-1.3 1-.5 1.5.4.3 1.1.5 1.5.7-.5 1.2-1.5 2.3-3.1 3-.6.3-.5 1.2.1 1.4 1 .4 2 .5 2.8.7.3.1.5.7.8 1.2.2.3.6.4 1 .3.8-.2 1.6-.5 2.9-.5s2.1.3 2.9.5c.4.1.8 0 1-.3.3-.5.5-1.1.8-1.2.8-.2 1.8-.3 2.8-.7.6-.2.7-1.1.1-1.4-1.6-.7-2.6-1.8-3.1-3 .4-.2 1.1-.4 1.5-.7.8-.5.3-1.8-.5-1.5-.5.2-1.1.1-1.5-.1.1-.7.2-1.6.2-2.4 0-3.2-2.1-5.7-5.2-5.7Z"/></svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z"/></svg>
                 </span>
                 <span aria-label="لنك تري (Linktree)">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.736 5.852 17.644 2l1.92 1.92-3.852 3.736h5.644v2.736h-5.66l3.868 3.752-1.92 1.92-5.276-5.28-5.276 5.28-1.92-1.92 3.868-3.752H3.38V7.656h5.644L5.172 3.92 7.092 2l3.932 3.852V0h2.712v5.852ZM11.024 24v-8.604h2.712V24h-2.712Z"/></svg>
@@ -1093,7 +1199,7 @@
               </div>
             </div>
           </div>
-          <p class="share-guidance">فحص استرشادي أولي، وتخضع المواءمة النهائية لتفاصيل النشاط والحملة والجهة المختصة.</p>
+          <p class="share-guidance">فحص استرشادي أولي • almohammdin.github.io/ADsChek</p>
         </div>
       </div>
     `;
@@ -1151,7 +1257,7 @@
 
   function downloadPreparedImage() {
     if (!preparedImage) {
-      showToast("جهّز الصورة أولا.");
+      showToast("ابدأ بتجهيز الصورة.");
       return;
     }
     const link = document.createElement("a");
@@ -1165,7 +1271,7 @@
 
   function sharePreparedImage() {
     if (!preparedImage) {
-      showToast("جهّز الصورة أولا.");
+      showToast("ابدأ بتجهيز الصورة.");
       return;
     }
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [preparedImage.file] })) {
