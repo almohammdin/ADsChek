@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "2.1.0";
+  const APP_VERSION = "2.2.0";
 
   const ICONS = {
     social: '<svg viewBox="0 0 24 24"><path d="M7 8.5a5 5 0 0 1 10 0v7a5 5 0 0 1-10 0v-7Z"/><path d="M10 12h4M12 10v4"/></svg>',
@@ -470,6 +470,34 @@
     }
   ];
 
+  const LICENSE_RULES = new Set(["DISC-01", "COMP-01", "INF-01"]);
+  function answerOptions(rule) {
+    return LICENSE_RULES.has(rule.id)
+      ? [["yes", "صدر وساري وينطبق"], ["no", "لم يصدر أو غير ساري"], ["unknown", "غير متأكد"]]
+      : [["yes", "نعم"], ["partial", "إلى حد ما"], ["no", "لا"], ["unknown", "غير متأكد"]];
+  }
+  function questionCount(n) {
+    return n === 1 ? "سؤال واحد" : n === 2 ? "سؤالان" : n <= 10 ? n + " أسئلة" : n + " سؤالًا";
+  }
+  let moduleIndex = 0;
+  function updateModule(focus = false) {
+    const modules = [...document.querySelectorAll(".question-module")];
+    moduleIndex = Math.max(0, Math.min(moduleIndex, modules.length - 1));
+    modules.forEach((module, index) => { module.hidden = index !== moduleIndex; });
+    $("modulePosition").textContent = "المجموعة " + (moduleIndex + 1) + " من " + modules.length;
+    $("previousModule").disabled = moduleIndex === 0;
+    $("nextModule").hidden = moduleIndex === modules.length - 1;
+    $("showResult").hidden = moduleIndex !== modules.length - 1;
+    const remaining = [...(modules[moduleIndex]?.querySelectorAll(".question-card") || [])].some(card => !state.answers[card.dataset.rule]);
+    $("nextModule").disabled = remaining;
+    if (focus) {
+      const heading = modules[moduleIndex]?.querySelector("h3");
+      heading?.setAttribute("tabindex", "-1");
+      heading?.focus({ preventScroll: true });
+      $("questionsRoot").scrollIntoView({ behavior: "instant", block: "start" });
+    }
+  }
+
   const state = {
     channels: new Set(),
     features: new Set(),
@@ -519,7 +547,10 @@
 
   function showView(id) {
     views.forEach(viewId => { $(viewId).hidden = viewId !== id; });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
+    const heading = $(id).querySelector("h1, h2");
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus({ preventScroll: true });
   }
 
   function renderChoices(items, targetId, selectedSet) {
@@ -566,7 +597,7 @@
       <section class="question-module">
         <div class="module-head">
           <h3>${module}</h3>
-          <span>${rules.length} ${rules.length === 1 ? "سؤال" : "أسئلة"}</span>
+          <span>${questionCount(rules.length)}</span>
         </div>
         ${rules.map(rule => {
           number += 1;
@@ -586,15 +617,11 @@
                 </div>
               </div>
               <div class="answer-grid" role="group" aria-label="إجابة السؤال ${number}">
-                ${[
-                  ["yes", "نعم"],
-                  ["partial", "إلى حد ما"],
-                  ["no", "لا"],
-                  ["unknown", "غير متأكد"]
-                ].map(([value, label]) => `
-                  <button class="answer-btn${state.answers[rule.id] === value ? " selected" : ""}" type="button" data-value="${value}">${label}</button>
+                ${answerOptions(rule).map(([value, label]) => `
+                  <button class="answer-btn${state.answers[rule.id] === value ? " selected" : ""}" type="button" data-value="${value}" aria-pressed="${state.answers[rule.id] === value}"><span class="answer-check" aria-hidden="true">${state.answers[rule.id] === value ? "✓" : ""}</span>${label}</button>
                 `).join("")}
               </div>
+              <details class="question-source"><summary>المصدر المرتبط بالسؤال</summary><a href="${SOURCES[rule.source].url}" target="_blank" rel="noopener">${SOURCES[rule.source].title}</a></details>
             </article>
           `;
         }).join("")}
@@ -603,6 +630,7 @@
 
     const campaignName = $("campaignName").value.trim();
     $("assessmentIntro").textContent = `${campaignName ? `حملة «${campaignName}» تتطلب` : "هذا الإعلان يتطلب"} مراجعة ${state.activeRules.length} نقطة تنطبق على وصفك.`;
+    moduleIndex = 0;
     updateProgress();
     showView("assessmentView");
   }
@@ -617,7 +645,8 @@
     $("showResult").disabled = answered !== total;
     $("answerHint").textContent = answered === total
       ? "اكتملت الإجابات. النتيجة جاهزة."
-      : `متبقي ${total - answered} ${total - answered === 1 ? "سؤال" : "أسئلة"}. استخدم «غير متأكد» إذا لم تملك الإجابة.`;
+      : `المتبقي: ${questionCount(total - answered)}. يمكنك اختيار «غير متأكد».`;
+    updateModule();
   }
 
   function calculateResult() {
@@ -688,7 +717,7 @@
     if (blockers.length) {
       decision = {
         key: "stop",
-        title: blockers.length === 1 ? "مانع واحد قبل النشر" : `${blockers.length} موانع قبل النشر`,
+        title: `نقاط مانعة قبل النشر: ${blockers.length}`,
         message: "عالج النقاط المانعة أدناه قبل النشر."
       };
     } else if (incompleteCritical.length || uncertainCritical.length) {
@@ -711,6 +740,16 @@
       };
     }
 
+    // The publication decision takes precedence over the weighted indicator everywhere.
+    if (decision.key === "stop") {
+      level = { key: "severe", title: "يلزم معالجة مانع قبل النشر", message: decision.message, color: "#b33434", bg: "#fff0ef" };
+    } else if (decision.key === "verify") {
+      level = { key: "caution", title: "يلزم استكمال وتحقق قبل النشر", message: decision.message, color: "#906600", bg: "#fff8e5" };
+    } else if (issues.length) {
+      level = { key: "caution", title: "توجد تعديلات قبل المراجعة النهائية", message: "راجع الملاحظات أدناه وأكملها ثم أعد الفحص.", color: "#906600", bg: "#fff8e5" };
+    } else {
+      level = { key: "safe", title: "مستوفٍ بحسب إجاباتك", message: "اكتملت نقاط الفحص المختارة. انتقل إلى مراجعة النسخة النهائية داخل المنشأة.", color: "#167a55", bg: "#edf8f3" };
+    }
     state.result = {
       score,
       issues,
@@ -749,20 +788,20 @@
         </div>
         <div class="status-layout">
           <div class="status-copy">
-            <span class="status-label">مستوى الجاهزية</span>
+            <span class="status-label">حالة المراجعة</span>
             <h3>${result.level.title}</h3>
             <p>${result.level.message}</p>
           </div>
-          <div class="score-box" aria-label="درجة الجاهزية ${result.score} من 100">
+          <div class="score-box" aria-label="مؤشر استيفاء الإجابات ${result.score} من 100">
             <strong>${result.score}</strong>
             <span>من 100</span>
             <small>الأعلى أفضل</small>
           </div>
         </div>
-        <div class="risk-meter" role="img" aria-label="درجة جاهزية الإعلان ${result.score} من 100، والأعلى أفضل">
-          <div class="risk-meter-head"><span>درجة الجاهزية</span><strong>${result.score} من 100 • الأعلى أفضل</strong></div>
+        <div class="risk-meter" role="img" aria-label="مؤشر استيفاء الإجابات ${result.score} من 100، والأعلى أفضل">
+          <div class="risk-meter-head"><span>مؤشر استيفاء الإجابات</span><strong>${result.score} من 100 • الأعلى أفضل</strong></div>
           <div class="risk-meter-track"><span class="risk-meter-pointer"></span></div>
-          <div class="risk-meter-labels"><span>جاهزية منخفضة</span><span>جاهزية متوسطة</span><span>جاهزية مرتفعة</span></div>
+          <div class="risk-meter-labels"><span>استيفاء أقل</span><span>استيفاء متوسط</span><span>استيفاء أعلى</span></div>
         </div>
         <div class="publish-decision ${result.decision.key}">
           <span class="publish-decision-icon" aria-hidden="true">${result.decision.key === "clear" ? "✓" : "!"}</span>
@@ -797,8 +836,8 @@
                     <span class="issue-dot"></span>
                     <div>
                       <div class="issue-meta"><span class="issue-priority">${priority.label}</span><span class="issue-answer">${issueAnswerMeta[issue.answer]}</span></div>
-                      <h4>${issue.question}</h4>
-                      <p class="issue-action"><strong>الإجراء المقترح</strong><span>${issue.fix}</span></p>
+                      <h4>${issue.fix}</h4>
+                      <p class="issue-action"><strong>نقطة المراجعة</strong><span>${issue.question}</span></p>
                       ${source ? `<div class="source-links"><a class="source-link" href="${source.url}" target="_blank" rel="noopener">${source.linkLabel || `المصدر: ${source.title}`}</a>${source.extraUrl ? `<a class="source-link" href="${source.extraUrl}" target="_blank" rel="noopener">${source.extraTitle}</a>` : ""}</div>` : ""}
                     </div>
                   </li>
@@ -815,7 +854,7 @@
           </div>
           <ul class="positive-list">
             ${result.positives.length
-              ? result.positives.slice(0, 8).map(rule => `<li>${rule.question}</li>`).join("")
+              ? result.positives.map(rule => `<li>${rule.question}</li>`).join("")
               : `<li class="positive-empty">تظهر هنا النقاط المستوفاة بعد تعديل الإجابات وإعادة الفحص.</li>`}
           </ul>
         </section>
@@ -871,7 +910,7 @@
           <strong class="print-report-page-number">__REPORT_PAGINATION__</strong>
         </div>
         <div class="print-report-footer-naif">
-          <img src="assets/images/naif-logo-navy.png?v=2.1.0" alt="نايف المحمدي">
+          <img src="assets/images/naif-logo-navy.png?v=2.2.0" alt="نايف المحمدي">
         </div>
       </footer>
     `;
@@ -954,9 +993,9 @@
           <p>${result.level.message}</p>
         </div>
         <div class="print-report-readiness">
-          <div><span>درجة الجاهزية • الأعلى أفضل</span><strong>${result.score} من 100</strong></div>
+          <div><span>مؤشر استيفاء الإجابات • الأعلى أفضل</span><strong>${result.score} من 100</strong></div>
           <div class="print-risk-track"><span></span></div>
-          <div class="print-risk-labels"><span>جاهزية منخفضة</span><span>جاهزية متوسطة</span><span>جاهزية مرتفعة</span></div>
+          <div class="print-risk-labels"><span>استيفاء أقل</span><span>استيفاء متوسط</span><span>استيفاء أعلى</span></div>
         </div>
         <div class="print-report-decision ${result.decision.key}">
           <strong>${result.decision.title}</strong>
@@ -1109,20 +1148,20 @@
         <div class="share-status">
           <div class="share-status-main">
             <div>
-              <small>مستوى الجاهزية</small>
+              <small>حالة المراجعة</small>
               <h2>${result.level.title}</h2>
               <p>${result.level.message}</p>
             </div>
-            <div class="share-score" aria-label="درجة الجاهزية ${result.score} من 100">
+            <div class="share-score" aria-label="مؤشر استيفاء الإجابات ${result.score} من 100">
               <strong>${result.score}</strong>
               <span>من 100</span>
               <small>الأعلى أفضل</small>
             </div>
           </div>
           <div class="share-readiness">
-            <div class="share-readiness-head"><span>درجة الجاهزية</span><strong>${result.score} من 100 • الأعلى أفضل</strong></div>
+            <div class="share-readiness-head"><span>مؤشر استيفاء الإجابات</span><strong>${result.score} من 100 • الأعلى أفضل</strong></div>
             <div class="share-risk-track"><span></span></div>
-            <div class="share-risk-labels"><span>جاهزية منخفضة</span><span>جاهزية متوسطة</span><span>جاهزية مرتفعة</span></div>
+            <div class="share-risk-labels"><span>استيفاء أقل</span><span>استيفاء متوسط</span><span>استيفاء أعلى</span></div>
           </div>
           <div class="share-decision ${result.decision.key}">
             <strong>${result.decision.title}</strong>
@@ -1169,13 +1208,13 @@
 
         <div class="share-reading">
           <strong>طريقة القراءة</strong>
-          <span>كلما ارتفعت الدرجة زادت الجاهزية. تبدأ الأولوية بالنقاط المانعة ثم بقية التعديلات.</span>
+          <span>المؤشر يعكس الإجابات؛ وجود مانع أو نقطة تحقق يستلزم المعالجة مهما ارتفعت الدرجة.</span>
         </div>
 
         <div class="share-footer">
           <div class="share-footer-main">
             <div class="share-owner">
-              <img src="assets/images/naif-logo-navy.png?v=2.1.0" alt="نايف المحمدي">
+              <img src="assets/images/naif-logo-navy.png?v=2.2.0" alt="نايف المحمدي">
               <div>
                 <strong>فاحص الامتثال الإعلاني</strong>
                 <span>الإصدار ${APP_VERSION}</span>
@@ -1380,7 +1419,11 @@
     if (answer) {
       const card = answer.closest(".question-card");
       state.answers[card.dataset.rule] = answer.dataset.value;
-      card.querySelectorAll(".answer-btn").forEach(btn => btn.classList.toggle("selected", btn === answer));
+      card.querySelectorAll(".answer-btn").forEach(btn => {
+        btn.classList.toggle("selected", btn === answer);
+        btn.setAttribute("aria-pressed", String(btn === answer));
+        btn.querySelector(".answer-check").textContent = btn === answer ? "✓" : "";
+      });
       updateProgress();
       return;
     }
@@ -1398,6 +1441,8 @@
     if (action === "restart") restart();
   });
 
+  $("previousModule").addEventListener("click", () => { moduleIndex--; updateModule(true); });
+  $("nextModule").addEventListener("click", () => { moduleIndex++; updateModule(true); });
   $("buildAssessment").addEventListener("click", buildAssessment);
   $("showResult").addEventListener("click", renderResult);
   $("shareImage").addEventListener("click", prepareResultImage);
@@ -1412,3 +1457,4 @@
   renderChoices(FEATURES, "featureChoices", state.features);
   updateProfileState();
 })();
+
