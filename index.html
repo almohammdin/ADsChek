@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar-SA" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -16,9 +16,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=2.1.0">
+  <link rel="stylesheet" href="assets/css/style.css?v=2.2.0">
   <script defer src="assets/js/vendor/html2canvas.min.js?v=1.4.1"></script>
-  <script defer src="assets/js/app.js?v=2.1.0"></script>
+  <script defer src="assets/js/app.js?v=2.2.0"></script>
   <title>فاحص الامتثال الإعلاني | مراجعة الحملة الإعلانية قبل النشر</title>
 </head>
 <body>
@@ -114,10 +114,13 @@
         <div class="progress-track"><span id="progressBar"></span></div>
       </section>
 
+      <div class="module-navigation"><strong id="modulePosition" aria-live="polite"></strong><span>إجاباتك محفوظة أثناء التنقل بين المجموعات</span></div>
       <div id="questionsRoot"></div>
 
       <div class="sticky-action">
         <div id="answerHint">أجب عن جميع الأسئلة. استخدم «غير متأكد» عندما لا تملك الإجابة.</div>
+        <button class="secondary-btn" id="previousModule" type="button">المجموعة السابقة</button>
+        <button class="primary-btn" id="nextModule" type="button">المجموعة التالية</button>
         <button class="primary-btn" id="showResult" type="button" disabled>اعرض النتيجة</button>
       </div>
     </section>
@@ -127,7 +130,7 @@
         <div>
           <span class="step-count">الخطوة 3 من 3</span>
           <h2>نتيجة فحص الإعلان</h2>
-          <p>توضح النتيجة درجة الجاهزية، وأولويات ما قبل النشر، والإشارات المطمئنة.</p>
+          <p>ابدأ بحالة المراجعة، ثم عالج الملاحظات بحسب الأولوية قبل النشر.</p>
         </div>
         <button class="text-btn" type="button" data-action="edit-answers">مراجعة الإجابات</button>
       </div>
@@ -156,7 +159,7 @@
         </a>
         <div class="footer-credit">
           <strong>تطوير وإشراف نايف المحمدي</strong>
-          <span>الإصدار 2.1.0</span>
+          <span>الإصدار 2.2.0</span>
         </div>
         <nav class="footer-social" aria-label="حساباتي">
           <a class="social-handle" href="https://linktr.ee/almohammdin" target="_blank" rel="noopener">Almohammdin</a>
@@ -205,3 +208,4 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
+
